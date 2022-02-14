@@ -86,10 +86,15 @@ class Route
 
 	function ErrorPage404()
 	{
-        $host = 'https://'.$_SERVER['HTTP_HOST'].'/project_mvc/';
+        $host = GlobalAR::$AR->host;
         header('HTTP/1.1 404 Not Found');
 		header("Status: 404 Not Found");
 		header('Location:'.$host.'404');
+    }
+    function logout(){
+        $host = GlobalAR::$AR->host;
+        header('Refresh: 0; url='.$host.'');
+        //header('Location:'.$host);
     }
     
 }

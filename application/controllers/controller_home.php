@@ -14,13 +14,12 @@ class Controller_home extends Controller
         */
         if ( $_SESSION['auth'] == true )
         {
-            var_dump($_SESSION);
             $this->view->generate('home_view.php', 'template_view.php');
         }
         else
         {
             session_destroy();
-            Route::ErrorPage404();
+            Route::logout();
         }
 
     }
@@ -30,7 +29,7 @@ class Controller_home extends Controller
     {
         session_start();
         session_destroy();
-        header('Location:./');
+        header('Location:./index.php?login');
     }
 
 }

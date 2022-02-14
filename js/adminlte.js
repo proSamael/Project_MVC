@@ -1213,7 +1213,7 @@
     allowDuplicates: false,
     allowReload: true,
     loadingScreen: true,
-    useNavbarItems: true,
+    useNavbarItems: false,
     scrollOffset: 40,
     scrollBehaviorSwap: false,
     iconMaximize: 'fa-expand',

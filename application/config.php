@@ -7,6 +7,7 @@
  * @subpackage GlobalAR
  * Show or debug information
  * @property boolean debug
+ * @property string host
  */
 //Обьявляем константы
 class Config {
@@ -78,7 +79,9 @@ class GlobalAR extends Config
 GlobalAR::init();
 
 // Создаем глобальные пременные по умолчанию.
-GlobalAR::$AR->debug = 1; // отображения debug информации
+GlobalAR::$AR->debug = 0; // отображения debug информации
+GlobalAR::$AR->host = 'https://'.$_SERVER['HTTP_HOST'].'/project_mvc/index.php';
+
 if(GlobalAR::$AR->debug == 1) {
     var_dump(GlobalAR::$AR->getAll());
 }

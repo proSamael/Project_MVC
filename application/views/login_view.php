@@ -1,3 +1,4 @@
+</head>
 <body class="hold-transition login-page">
 <div class="login-box">
     <!-- /.login-logo -->
@@ -37,7 +38,7 @@
                 <div class="row">
                     <div class="col-8">
                         <div class="icheck-primary">
-                            <input type="checkbox" id="remember">
+                            <input type="checkbox" id="remember" name="remember">
                             <label for="remember">
                                 Запомнить меня?
                             </label>
@@ -51,15 +52,21 @@
                 </div>
             </form>
             <!-- /.social-auth-links -->
-            <p class="mb-1">
-                <a href="">I forgot my password</a>
-            </p>
-            <p class="mb-0">
-                <a href="" class="text-center">Register a new membership</a>
-            </p>
+            <!--  <p class="mb-1">
+                 <a href="">I forgot my password</a>
+             </p>
+             <p class="mb-0">
+                 <a href="" class="text-center">Register a new membership</a>
+             </p> -->
         </div>
         <!-- /.card-body -->
     </div>
     <!-- /.card -->
 </div>
 <!-- /.login-box -->
+<!-- jQuery -->
+<script src="./application/plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="./application/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script src="./js/adminlte.min.js"></script>
