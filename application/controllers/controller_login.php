@@ -43,6 +43,7 @@ class Controller_login extends Controller
                 if ($user_pass['password'] == $salt) {
                     //Пароль верный присваем сейсcии true
                     $_SESSION['auth'] = true;
+                    $_SESSION['userid'] = $user_pass['id'];
                     //Проверяем, если галочка была поставлена
                     if (isset($_POST["remember"])) {
                         //Создаём токен
@@ -74,7 +75,7 @@ class Controller_login extends Controller
         }else{
             $data["login_status"] = "";
         }
-        $this->view->generate('login_view.php', 'template_view.php', $data);
+        $this->view->generate('login_view.php', 'template_view.php',null,null, $data);
     }
 
 }

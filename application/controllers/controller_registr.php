@@ -12,9 +12,7 @@ class Controller_registr extends Controller
 
     function action_index()
     {
-
         if (isset($_POST['login'])) {
-
             $login = $_POST['login'];
             $username = $_POST['username'];
             $password = $_POST['password'];
@@ -46,7 +44,7 @@ class Controller_registr extends Controller
                             'password_r' => $salt,
                             'email' => $email,
                             'username' => $username,
-                            'access' => 1,
+                            'role' => 1,
                             'count_login' => 0,
                             'token' => null,
                             );
@@ -71,6 +69,6 @@ class Controller_registr extends Controller
         }else{
             $data["reg_error"] = "";
         }
-        $this->view->generate('register_view.php', 'template_view.php', $data);
+        $this->view->generate('register_view.php', 'template_view.php',null,null, $data);
     }
 }

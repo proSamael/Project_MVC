@@ -18,7 +18,7 @@
 
             <form action="" method="post">
                 <div class="input-group mb-3">
-                    <input type="login" class="form-control"  name="login" placeholder="login">
+                    <input type="login" class="form-control"  name="login" placeholder="Логин или Email">
                     <div class="input-group-append">
                         <div class="input-group-text">
                             <span class="fas fa-envelope">
@@ -29,7 +29,7 @@
                     </div>
                 </div>
                 <div class="input-group mb-3">
-                    <input type="password" class="form-control" name="password" placeholder="password">
+                    <input type="password" class="form-control" name="password" placeholder="Пароль">
                     <div class="input-group-append">
                         <div class="input-group-text">
                             <span class="fas fa-lock"></span>
