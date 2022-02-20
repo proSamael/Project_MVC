@@ -9,6 +9,13 @@
         <div class="card-body">
             <p class="login-box-msg">Login in Project MVC</p>
 
+            <?php extract($data); ?>
+            <?php if($login_status=="access_granted") { ?>
+                <p style="color:green">Авторизация прошла успешно.</p>
+            <?php } elseif($login_status=="access_denied") { ?>
+                <p style="color:red">Логин и/или пароль введены неверно.</p>
+            <?php }  ?>
+
             <form action="" method="post">
                 <div class="input-group mb-3">
                     <input type="login" class="form-control"  name="login" placeholder="login">
@@ -16,12 +23,6 @@
                         <div class="input-group-text">
                             <span class="fas fa-envelope">
 
-                                <?php extract($data); ?>
-                                <?php if($login_status=="access_granted") { ?>
-                                    <p style="color:green">Авторизация прошла успешно.</p>
-                                <?php } elseif($login_status=="access_denied") { ?>
-                                    <p style="color:red">Логин и/или пароль введены неверно.</p>
-                                <?php } ?>
 
                             </span>
                         </div>
@@ -54,10 +55,10 @@
             <!-- /.social-auth-links -->
             <!--  <p class="mb-1">
                  <a href="">I forgot my password</a>
-             </p>
+             </p>-->
              <p class="mb-0">
-                 <a href="" class="text-center">Register a new membership</a>
-             </p> -->
+                 <a href="./index.php?registr" class="text-center">Регистрация</a>
+             </p>
         </div>
         <!-- /.card-body -->
     </div>

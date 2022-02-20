@@ -12,19 +12,19 @@ class Controller_login extends Controller
 
     function action_index()
     {
-        //$data["login_status"] = "";
+
+
         session_start();
         if(isset($_SESSION['auth'])) {
             //echo "false";
-            var_dump($_SESSION);
+            //var_dump($_SESSION);
             if ($_SESSION['auth'] == true) {
                 header('Location:./index.php?home');
             }
         }
         $parent_id = 1;
 
-        $name = $this->db->getOne('SELECT login FROM users WHERE id > ?i',$parent_id);
-
+;
 
 
         if(isset($_POST['login']) && isset($_POST['password']))
@@ -36,7 +36,24 @@ class Controller_login extends Controller
             Такое решение не верно с точки зрения безопсаности и сделано для упрощения примера.
             Логин и пароль должны храниться в БД, причем пароль должен быть захеширован.
             */
-            if($login=="admin" && $password=="12345")
+            // запрос MySQL: выбираем столбцы в таблице
+            $user_pass = $this->db->getRow('SELECT * FROM users WHERE login = ?s LIMIT 0,1',$login);
+            //$email_pass = $this->db->getOne("SELECT email FROM users WHERE email = ?s",$login);
+
+            if(isset($user_pass) && ($user_pass!=false)){
+
+                var_dump($user_pass);
+                $salt = '0x'.md5($login.$password);
+                if($user_pass['password'] == $salt){
+                    $_SESSION['auth'] = true;
+                    header('Location:./index.php?home');
+                }else{
+                    $_SESSION['auth'] = false;
+                }
+            }
+
+
+            if($login=="admin" && $password=="123451")
             {
                 $data["login_status"] = "access_granted";
                 echo $_SESSION['auth'];
@@ -72,7 +89,7 @@ class Controller_login extends Controller
                     $data["login_status"] = "";
                 }
 
-
+        //var_dump($data);
         $this->view->generate('login_view.php', 'template_view.php', $data);
     }
 
