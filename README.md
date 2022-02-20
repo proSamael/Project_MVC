@@ -2,4 +2,4 @@
 
 - test server: `https://link.plus-game.ru/project_mvc/`
 - **login: admin**
-- **passwd: 12345**
+- **passwd: test**
