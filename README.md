@@ -1,5 +1,5 @@
 ﻿Отдельно благодарность vitalyswipe(хабр) за описание и пример работы с MVC
 
-- test server: `https://link.plus-game.ru/project_mvc/`
+- test server: `https://prosamael.ru/project_mvc/`
 - **login: admin**
 - **passwd: test**
