@@ -25,4 +25,12 @@ class controller_settings extends Controller
             Route::logout();
         }
     }
+    function action_get_reg_settings(){
+        $reg_settings = $this->db->getInd('set_name','SELECT * FROM `settings` WHERE `group` = 1');
+        echo json_encode($reg_settings);
+    }
+    function action_get_listrole(){
+        $listrole = $this->db->getAll('SELECT * FROM `roles`');
+        echo json_encode($listrole);
+    }
 }
