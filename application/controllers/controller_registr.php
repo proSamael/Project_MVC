@@ -12,6 +12,7 @@ class Controller_registr extends Controller
 
     function action_index()
     {
+        $reg_settings = $this->db->getInd('set_name','SELECT * FROM `settings` WHERE `group` = 1');
         if (isset($_POST['login'])) {
             $login = $_POST['login'];
             $username = $_POST['username'];
@@ -37,29 +38,53 @@ class Controller_registr extends Controller
                     }elseif(!isset($_POST['terms'])){
                         $data["reg_error"] = "<p class='login-box-msg' style=\"color:red\">Вы должны согласиться с правилами!</p>";
                     }else{
-                        $salt = '0x'.md5($_POST['login'].$_POST['password']);
+                        if($reg_settings['reg_type']['value']==1){
+                            $salt = '0x'.md5($_POST['login'].$_POST['password']);
+                        }elseif($reg_settings['reg_type']['value']==2){
+                            $salt = '0x' . hash('sha256', $user_pass['login'] . $password);
+                        }else{
+                            $salt = '0x' . $password;
+                        }
                         $data = array(
                             'login' => $login,
                             'password' => $salt,
                             'password_r' => $salt,
                             'email' => $email,
                             'username' => $username,
-                            'role' => 1,
+                            'role' => $reg_settings['reg_access_new_user']['value'],
                             'count_login' => 0,
                             'token' => null,
                             );
-                        $sql = "INSERT INTO users SET reg_date=CURDATE(),?u;";
-                        $this->db->query($sql,$data);
-                        session_start();
-                        $result_id =  $this->db->insertId();
-                        //Автовход при регистрации
-                        if($result_id!=null) {
-                            $_SESSION['auth'] = true;
-                            $_SESSION['userid'] = $result_id;
-                            header('Location:./index.php?home');
+
+
+                        if($reg_settings['reg_active']['value']==1){
+                            $sql = "INSERT INTO users SET reg_date=CURDATE(),?u;";
+                            $this->db->query($sql,$data);
+                            session_start();
+                            $result_id =  $this->db->insertId();
+                            //Автовход при регистрации
+                            if($reg_settings['reg_auto_log_new_user']['value']==1){
+                                if($result_id!=null) {
+                                    $_SESSION['auth'] = true;
+                                    $_SESSION['userid'] = $result_id;
+                                    header('Location:./index.php?home');
+                                }
+                            }else{
+                                if($result_id!=null) {
+                                    $_SESSION['auth'] = false;
+                                    session_destroy();
+                                    //$_SESSION['userid'] = $result_id;
+                                    header('Location:./index.php?login');
+                                }
+                            }
+                            $data["reg_error"] = "<p class='login-box-msg' style=\"color:green\">Вы успешно зарегистрировались, <a href=\"./index.php?login\" class=\"nav-link\">теперь можно войти в систему</a>!</p>";
+
+                        }else{
+                            $data["reg_error"] = "<p class='login-box-msg' style=\"color:red\">Регистрация временно недоступна!</p>";
                         }
-                        $data["reg_error"] = "<p class='login-box-msg' style=\"color:green\">Вы успешно зарегистрировались, <a href=\"./index.php?login\" class=\"nav-link\">теперь можно войти в систему</a>!</p>";
-                    }
+
+
+                   }
                 }else{
                     $data["reg_error"] = "<p class='login-box-msg' style=\"color:red\">Не верный Email!</p>";
                 }
