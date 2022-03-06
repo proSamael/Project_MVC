@@ -15,4 +15,10 @@
     <link rel="stylesheet" href="./css/adminlte.min.css">
     <!-- overlayScrollbars -->
     <link rel="stylesheet" href="./application/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+    <link rel="stylesheet" href="./application/plugins/toastr/toastr.min.css">
+    <link rel="stylesheet" href="./application/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+
+    <link rel="stylesheet" href="./application/plugins/jsgrid/jsgrid.min.css">
+    <link rel="stylesheet" href="./application/plugins/jsgrid/jsgrid-theme.min.css">
+
 </head>

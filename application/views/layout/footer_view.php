@@ -2,7 +2,7 @@
     <strong>Copyright &copy; 2022 <a href="https://github.com/proSamael/Project_MVC">proSamael</a>.</strong>
     All rights reserved.
     <div class="float-right d-none d-sm-inline-block">
-        <b>Version</b> 86ad988-master
+        <b>Version</b> bc0eb8e-master
     </div>
 </footer>
 
