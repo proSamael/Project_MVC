@@ -45,6 +45,16 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="./index.php?price" class="nav-link">
+                        <i class="nav-icon fa fa-list"></i>
+
+                        <p>
+                            Прайс Лист
+                            <span class="right badge badge-danger">New</span>
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="./index.php?settings" class="nav-link">
                         <i class="nav-icon fa fa-cog"></i>
                         <p>

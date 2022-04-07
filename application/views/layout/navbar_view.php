@@ -1,8 +1,9 @@
-<body class="hold-transition sidebar-mini layout-fixed text-sm dark-mode " data-panel-auto-height-mode="height">
+<body class="hold-transition sidebar-mini layout-fixed text-sm " data-panel-auto-height-mode="height">
+<body class="hold-transition sidebar-mini layout-fixed text-sm " data-panel-auto-height-mode="height">
 <div class="wrapper">
 
     <!-- Navbar -->
-    <nav class="main-header navbar navbar-expand navbar-dark">
+    <nav class="main-header navbar navbar-expand">
         <!-- Left navbar links -->
         <ul class="navbar-nav">
             <li class="nav-item">

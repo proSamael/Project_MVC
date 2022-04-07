@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="./css/adminlte.min.css">
     <!-- overlayScrollbars -->
     <link rel="stylesheet" href="./application/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+
 </head>
 
 <?php include 'application/views/'.$content_view; ?>

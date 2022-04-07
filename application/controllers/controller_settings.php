@@ -12,12 +12,10 @@ class controller_settings extends Controller
         $this->view = new View();
         $this->db = new Database();
     }
-
     private function array_push_assoc($array, $key, $value){
         $array[$key] = $value;
         return $array;
     }
-
     function action_index()
     {
         $settings = $this->model->get_data_settings();
@@ -41,7 +39,6 @@ class controller_settings extends Controller
         $listrole = $this->db->getAll('SELECT * FROM `roles`');
         echo json_encode($listrole);
     }
-
     function action_set_reg_settings(){
         $data = Array();
         $result ='';
