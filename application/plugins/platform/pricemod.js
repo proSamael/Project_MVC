@@ -65,7 +65,6 @@ function formatToKop(n) { // конвертируют рубли в копейк
     var out = n.toFixed(2).replace(/\.0+$/,'');
     return out;
 }
-
 function moneyFormat(n) { // Формат рублей
     //in 1100,50 out 1100.5 р.
     n = n.replace(',', '.'); // 1 100.5 р.
@@ -74,10 +73,15 @@ function moneyFormat(n) { // Формат рублей
     out = out.toLocaleString() + ' р.'; // 1 100,5 р.
     return out;
 }
-
-//var n = '10050';
-//console.log(formatToKop(moneyFormat(formatToRub(n))));
-
+function customParseFloat(number){
+    //Если копейки равны целым десяткам  тгда дописываем в конце 0
+        let str = String(number);
+            let length = str.toString().match(/\.(\d+)/)?.[1].length;
+            if (length === 1) {
+                number = number + '0';
+            }
+    return number; // Not a number, so you may throw exception or return number itself
+}
 $("#price_row").change(function () {
     $(this).val($(this).val().replace(',', '.'));
 
@@ -85,11 +89,13 @@ $("#price_row").change(function () {
     if (TESTCURRENCY.length <= 1) {
         $(this).val(
             parseFloat(TESTCURRENCY.toString().match(/^\d+(?:\.\d{0,2})?/))
+
         );
+        $(this).val(customParseFloat($(this).val()));
     } else {
         $(this).val('Invalid a value!');
     }
-
+    //console.log($(this).val()*100);
     //if (!$.isNumeric($(this).val()))
     //    $(this).val('0').trigger('change');
     //$(this).val(parseFloat($(this).val(), 10).toFixed(2).toString());
@@ -256,11 +262,11 @@ $(document).ready(function() {
         rowCallback: function (row, data) {
             if ( data ) {
                 if(data.price  > 0){
-                    $('td', row).eq(4).addClass('').html(data.price/100);
-                    $('td', row).eq(5).addClass('').html((data.price*data.pack_in_count)/100);
+                    $('td', row).eq(4).addClass('').html(moneyFormat(formatToRub(data.price)));
+                    $('td', row).eq(5).addClass('').html(moneyFormat(formatToRub(data.price*data.pack_in_count)));
                     data.price_in_pack = (data.price*data.pack_in_count)/100;
                 }else{
-                    $('td', row).eq(4).addClass('').html(data.price);
+                    $('td', row).eq(4).addClass('').html(moneyFormat(formatToRub(data.price)));
                     $('td', row).eq(5).addClass('').html('0');
                 }
 
@@ -357,12 +363,29 @@ $(document).ready(function() {
         $("#id_r").val(data['id']);
         //$("#category_row").val(data['category']);
         $("#in_pack_row").val(data['in_pack']);
-        $("#price_row").val(data['price']);
+        $("#price_row").on('input', function() {
+            //регулярный выражения проверка денежного формата во избежании ошибки в записи
+            var c = this.selectionStart,
+                r = /[^0-9.,]/gim,
+                v = $(this).val();
+            if(r.test(v)) {
+                $(this).val(v.replace(r, ''));
+                send_message("warning","Regexp: Ошибка ввода данных!",'Не возможно использовать символы. Только 0-9 \',\' \'.\'',"Данная строка имеет денежный формат: 105,51 или 105.51 ");
+                c--;
+            }
+            this.setSelectionRange(c, c);
+        });
+        $("#price_row").val(formatToRub(data['price']));
 
     });
     jQuery('#modal_edit_save').click(function() {
         var data_from = objectifyForm('save_row');
+        data_from['price_row'] = formatToKop(data_from['price_row']);
         console.log(data_from);
         set_row(data_from);
+        $('#table_pricelist').DataTable().ajax.reload();
+        setInterval( function () {
+            $('#table_pricelist').DataTable().ajax.reload();
+        }, 1500 );
     });
 } );
