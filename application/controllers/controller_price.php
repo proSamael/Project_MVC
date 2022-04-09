@@ -92,6 +92,8 @@ FROM
         $set_row_data_slice = array_slice($set_row_data, 1);
         $set_row_data_change = $this->change_key($set_row_data_slice,'price_row','price');
         $id = $set_row_data_change['id'];
+
+
         //$data = arr($set_row_data_change, ['id']);
         //echo $id;
         //var_dump($set_row_data_change);
@@ -100,6 +102,7 @@ FROM
             {
                 $sql = "UPDATE `p_product` SET ?u WHERE `id` = ?i";
                 $this->db->query($sql,$set_row_data_change,$id);
+                $sql_result = $this->db->affectedRows();
                 //$sql  = "UPDATE `p_product` SET `value` = ?s WHERE `set_name` = ?s;";
                 //$this->db->query($sql,$set_value,$key);
                 $result = "Все параметры успешно сохранены: ";
@@ -108,5 +111,51 @@ FROM
 
         }
         echo $result;
+    }
+    function action_add_price_row(){
+        $result = Array();
+        $add_row_data =  $_GET;
+        $data = array('name' => $add_row_data['name_add'], 'category' => $add_row_data['category_add'],'count_in_pack' => $add_row_data['count_in_pack_add'], 'price' => $add_row_data['price_row_add'],'subcategory' => 0);
+        if( $data )
+        {
+            if ($data['name'] != null){
+                if($data['price'] != null){
+                    $sql = "INSERT INTO `p_product` SET ?u";
+                    $this->db->query($sql,$data);
+                    $sql_result = $this->db->insertId();
+                    $result = array('success'=> 0,  'error_msg'=> "Запись успешно добавлена", 'data_msg'=> 'Вернулось:'.$sql_result);
+                }else{
+                    $result = array('success'=> 1,  'error_msg'=> "Ошибка записи в параметре: Цена не должна быть пустой", 'data_msg'=> 'Вернулось:'.$data['price']);
+                }
+            }else{
+                $result = array('success'=> 1,  'error_msg'=> "Ошибка записи в параметре: Наименование не должно быть пустым", 'data_msg'=> 'Вернулось:'.$data['name']);
+            }
+        }
+        echo json_encode($result) ;
+    }
+    function action_delete_price_row(){
+        $result = Array();
+        $delete_row_data =  $_GET;
+        //$delete_row_data = array_slice($delete_row_data, 1);
+        //var_dump($delete_row_data);
+        if( $delete_row_data )
+        {
+            if ($delete_row_data['id'] != null){
+                $sql_result = 0;
+                $sql = "DELETE FROM `p_product` WHERE `id`=?i";
+                $this->db->query($sql,$delete_row_data['id']);
+                $sql_result = $this->db->affectedRows();
+                if($sql_result!=0){
+                    $result = array('success'=> 0,  'error_msg'=> "Запись успешно удалена", 'data_msg'=> 'Вернулось: '.$sql_result);
+                }else{
+                    $result = array('success'=> 1,  'error_msg'=> "Что-то пошло не так: MySQL affected error ", 'data_msg'=> 'Вернулось: '.$sql_result);
+                }
+            }else{
+                $result = array('success'=> 1,  'error_msg'=> "Ошибка удаления. Не верный id", 'data_msg'=> 'Вернулось: '.$delete_row_data['id']);
+            }
+        }else{
+            $result = array('success'=> 1,  'error_msg'=> "Ошибка чтения data", 'data_msg'=> 'Вернулось: '.$delete_row_data['id']);
+        }
+        echo json_encode($result) ;
     }
 }
