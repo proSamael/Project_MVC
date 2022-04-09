@@ -1,4 +1,5 @@
- <div class="container-fluid">
+<div class="content-wrapper">
+<div class="container-fluid">
         <div class="row">
             <div class="col-12">
 
@@ -79,6 +80,7 @@
             </div>
         </div>
     </div>
+</div>
  <script src="application/plugins/jquery/jquery.min.js"></script>
  <script src="application/plugins/sweetalert2/sweetalert2.min.js"></script>
  <script src="application/plugins/toastr/toastr.min.js"></script>

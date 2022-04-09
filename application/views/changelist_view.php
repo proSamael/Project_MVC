@@ -1,15 +1,51 @@
-<footer class="main-footer dark-mode">
-    <strong>Copyright &copy; 2022 <a href="https://github.com/proSamael/Project_MVC">proSamael</a>.</strong>
-    All rights reserved.
-    <div class="float-right d-none d-sm-inline-block">
-        <b>Version</b>  <a href="./index.php?changelist" id="latest_version"></a>
-    </div>
-</footer>
+<?php include 'application/views/layout/head_view.php'; ?>
+<?php include 'application/views/layout/navbar_view.php'; ?>
+<?php include 'application/views/layout/sidebar_view.php'; ?>
 
-<!-- Control Sidebar -->
-<aside class="control-sidebar control-sidebar-dark">
-    <!-- Control sidebar content goes here -->
-</aside>
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>Timeline</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active">Timeline</li>
+                        </ol>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+
+                <!-- Timelime example  -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- The time line -->
+                        <div class="timeline" id="timeline">
+
+
+
+
+                        </div>
+                    </div>
+                    <!-- /.col -->
+                </div>
+            </div>
+            <!-- /.timeline -->
+
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
 <!-- /.control-sidebar -->
 </div>
 <!-- ./wrapper -->
@@ -44,6 +80,5 @@
 <script src="./application/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
 <script src="./application/plugins/datatables-buttons/js/buttons.print.min.js"></script>
 <script src="./application/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
-<script src="./application/plugins/platform/platform.js"></script>
 <script src="./application/plugins/moment/moment.min.js"></script>
 <script src="./application/plugins/platform/changelist.js"></script>
