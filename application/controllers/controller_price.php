@@ -52,8 +52,8 @@ class controller_price extends Controller
 	pr.price,
 	pack.id AS pack_id,
 	pack.count AS pack_in_count,
-	pr.price AS price_in_pack,
-	pr.price AS price_client
+	pr.price AS price_client,
+	pr.price AS price_in_pack_client
 FROM
 	p_product AS pr
 	LEFT JOIN
@@ -76,7 +76,18 @@ FROM
     }
     function action_get_list_cat(){
         $list_cat = $this->db->getAll('SELECT * FROM `p_category`');
+
         echo json_encode($list_cat);
+    }
+    function action_get_list_category(){
+        $list_cat = $this->db->getAll('SELECT * FROM `p_category`');
+        $data=Array("data" => $list_cat); //associative array
+        echo json_encode($data);
+    }
+    function action_get_list_in_pack(){
+        $list_cat = $this->db->getAll('SELECT * FROM `p_in_pack`');
+        $data=Array("data" => $list_cat); //associative array
+        echo json_encode($data);
     }
     function action_get_list_subcat(){
         $list_subcat = $this->db->getAll('SELECT * FROM `p_subcategory`');

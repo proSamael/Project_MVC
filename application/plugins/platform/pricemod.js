@@ -16,7 +16,20 @@ let Toast = Swal.mixin({
 
 });
 toastr.options = {}
-
+const menu = $(".menu");
+let menuVisible = false;
+const toggleMenu = command => {
+    command === "show" ? menu.show(300) : menu.hide(300);
+    menuVisible = !menuVisible;
+};
+const setPosition = ({
+                         top,
+                         left
+                     }) => {
+    menu.css("left", `${left}px`);
+    menu.css("top", `${top}px`);
+    toggleMenu("show");
+};
 function send_message(icon, title, message, footer) {
     Toast.fire({
         icon: icon,
@@ -25,7 +38,12 @@ function send_message(icon, title, message, footer) {
         footer: footer
     });
 };
-
+function isINT(x, y) {
+    if (Number.isInteger(y / x)) {
+        return true;
+    }
+    return false;
+}
 function set_row(dataform) {
     jQuery('form').each(function() {
         jQuery.ajax({
@@ -193,34 +211,16 @@ function customParseFloat(number) {
     }
     return number; // Not a number, so you may throw exception or return number itself
 }
-$("#price_row").change(function() {
-    $(this).val($(this).val().replace(',', '.'));
-
-    var TESTCURRENCY = $(this).val().toString().match(/(?=[\s\d])(?:\s\.|\d+(?:[.]\d+)*)/gmi);
-    if (TESTCURRENCY.length <= 1) {
-        $(this).val(
-            parseFloat(TESTCURRENCY.toString().match(/^\d+(?:\.\d{0,2})?/))
-
-        );
-        $(this).val(customParseFloat($(this).val()));
-    } else {
-        $(this).val('Invalid a value!');
+function isNumber(value) {
+    if ((undefined === value) || (null === value)) {
+        return false;
     }
-});
-$("#price_row_add").change(function() {
-    $(this).val($(this).val().replace(',', '.'));
-
-    var TESTCURRENCY = $(this).val().toString().match(/(?=[\s\d])(?:\s\.|\d+(?:[.]\d+)*)/gmi);
-    if (TESTCURRENCY.length <= 1) {
-        $(this).val(
-            parseFloat(TESTCURRENCY.toString().match(/^\d+(?:\.\d{0,2})?/))
-
-        );
-        $(this).val(customParseFloat($(this).val()));
-    } else {
-        $(this).val('Invalid a value!');
+    if (typeof value == 'number') {
+        return true;
     }
-});
+    return !isNaN(value - 0);
+}
+
 $.ajax({
     type: "GET",
     dataType: "json",
@@ -283,7 +283,7 @@ $(document).ready(function() {
                 body: function ( data, row, column, node ) {
                     // Strip $ from salary column to make it numeric
                     return column === 3 ?
-                        formatToRub(data) :
+                        data :
                         data;
                 }
             }
@@ -315,23 +315,23 @@ $(document).ready(function() {
             },
             {
                 data: 'price',
-                title: 'Цена c завода.'
-            },
-            {
-                data: 'price_in_pack',
-                title: 'Цена за упаковку.'
+                title: 'Цена c завода'
             },
             {
                 data: 'price_client',
-                title: 'Цена клиенту.'
-            }
+                title: 'Цена клиенту'
+            },
+            {
+                data: 'price_in_pack_client',
+                title: 'Цена за упаковку'
+            },
 
         ],
 
         language: {
             "decimal": "",
             "emptyTable": "No data available in table",
-            "info": "Страница _START_ из _TOTAL_",
+            "info": "Всего _TOTAL_",
             "infoEmpty": "Showing 0 to 0 of 0 entries",
             "infoFiltered": "(filtered from _MAX_ total entries)",
             "infoPostFix": "",
@@ -498,7 +498,7 @@ $(document).ready(function() {
                         }
                     },
                     {
-                        text: 'Цена c завода.',
+                        text: 'Цена c завода',
                         action: function() {
                             var table = $('#table_pricelist').DataTable();
                             if (table.columns([4]).visible()[0] === false) {
@@ -509,7 +509,7 @@ $(document).ready(function() {
                         }
                     },
                     {
-                        text: 'Цена за упаковку',
+                        text: 'Цена клиенту',
                         action: function() {
                             var table = $('#table_pricelist').DataTable();
                             if (table.columns([5]).visible()[0] === false) {
@@ -520,7 +520,7 @@ $(document).ready(function() {
                         }
                     },
                     {
-                        text: 'Цена клиенту',
+                        text: 'Цена за упаковку',
                         action: function() {
                             var table = $('#table_pricelist').DataTable();
                             if (table.columns([6]).visible()[0] === false) {
@@ -530,6 +530,7 @@ $(document).ready(function() {
                             }
                         }
                     },
+
                     {
                         text: 'Скрыть все',
                         action: function() {
@@ -585,20 +586,17 @@ $(document).ready(function() {
         rowCallback: function(row, data) {
             if (data) {
                 if (data.price > 0) {
-
                     $('td', row).eq(4).addClass('').html(formatToRub(data.price));
-                    $('td', row).eq(5).addClass('').html(formatToRub(data.price * data.pack_in_count));
-
                     var result = (parseInt(data.price) / 100) * parseInt(data_price_modif); //вычисление процентов
-
+                    $('td', row).eq(5).addClass('').html(formatToRub(result + parseInt(data.price)));
                     $('td', row).eq(6).addClass('').html(formatToRub((result + parseInt(data.price)) * parseInt(data.pack_in_count)));
                     if (data.price.match(/^-?\d*(\.\d+)?$/)) {
                         data.price = data.price;
                     } else {
                         data.price = formatToRub(data.price);
                     }
-                    data.price_in_pack = formatToRub(data.price * data.pack_in_count);
-                    data.price_client = formatToRub((result + parseInt(data.price)) * parseInt(data.pack_in_count));
+                    data.price_in_pack_client = formatToRub((result + parseInt(data.price)) * data.pack_in_count);
+                    data.price_client = formatToRub(result + parseInt(data.price));
                     data.price = formatToRub(data.price);
                 } else {
                     $('td', row).eq(4).addClass('').html('0');
@@ -613,6 +611,192 @@ $(document).ready(function() {
         },
 
     }).buttons().container().appendTo('#table_pricelist_wrapper .col-md-6:eq(0)');
+    $('#table_category').DataTable({
+        ajax: {
+            type: 'GET',
+            dataType: "json",
+            url: './index.php?price=get_list_category',
+            //dataSrc: 'data'
+        },
+
+        columns: [
+            {
+                data: 'id',
+                title: 'id'
+            },
+            {
+                data: 'name',
+                title: 'Наименование'
+            },
+            {
+                data: 'visible',
+                title: 'Отображать'
+            }
+        ],
+
+        language: {
+            "decimal": "",
+            "emptyTable": "No data available in table",
+            "info": "Всего _TOTAL_",
+            "infoEmpty": "Showing 0 to 0 of 0 entries",
+            "infoFiltered": "(filtered from _MAX_ total entries)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Show _MENU_ entries",
+            "loadingRecords": "Загрузка...",
+            "processing": "Загрузка...",
+            "search": "Поиск:",
+            "zeroRecords": "No matching records found",
+            "paginate": {
+                "first": "Перв.",
+                "last": "Посл.",
+                "next": "След.",
+                "previous": "Пред."
+            },
+            "aria": {
+                "sortAscending": ": activate to sort column ascending",
+                "sortDescending": ": activate to sort column descending"
+            },
+            "buttons": {
+
+                "copy": "Копировать",
+                "print": "Печать",
+                "colvis": "Категория",
+            }
+        },
+        dom: 'Bfrtip',
+
+        searching: true,
+        select: true,
+        lengthChange: false,
+        pageLength: 2000,
+        paging: false,
+        autoWidth: false,
+        rowReorder: true,
+
+        buttons: [
+
+                        {
+                            text: 'Обновить',
+                            action: function(e, dt, node, config) {
+                                dt.ajax.reload();
+                            }
+                        },
+                        {
+                            text: 'Добавить',
+                            action: function() {
+
+                            }
+                        },
+
+                ],
+
+        rowCallback: function(row, data) {
+            if (data) {
+
+            }
+        },
+        initComplete: function() {
+
+        },
+
+    }).buttons().container().appendTo('#table_category_wrapper .col-md-6:eq(0)');
+    $('#table_pack').DataTable({
+        ajax: {
+            type: 'GET',
+            dataType: "json",
+            url: './index.php?price=get_list_in_pack',
+            //dataSrc: 'data'
+        },
+
+        columns: [
+            {
+                data: 'id',
+                title: 'id'
+            },
+            {
+                data: 'name',
+                title: 'Наименование'
+            },
+            {
+                data: 'count',
+                title: 'Кол-во в упаковке'
+            },
+            {
+                data: 'type',
+                title: 'Тип упаковки'
+            }
+        ],
+
+        language: {
+            "decimal": "",
+            "emptyTable": "No data available in table",
+            "info": "Всего _TOTAL_",
+            "infoEmpty": "Showing 0 to 0 of 0 entries",
+            "infoFiltered": "(filtered from _MAX_ total entries)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Show _MENU_ entries",
+            "loadingRecords": "Загрузка...",
+            "processing": "Загрузка...",
+            "search": "Поиск:",
+            "zeroRecords": "No matching records found",
+            "paginate": {
+                "first": "Перв.",
+                "last": "Посл.",
+                "next": "След.",
+                "previous": "Пред."
+            },
+            "aria": {
+                "sortAscending": ": activate to sort column ascending",
+                "sortDescending": ": activate to sort column descending"
+            },
+            "buttons": {
+
+                "copy": "Копировать",
+                "print": "Печать",
+                "colvis": "Категория",
+            }
+        },
+        dom: 'Bfrtip',
+
+        searching: true,
+        select: true,
+        lengthChange: false,
+        pageLength: 2000,
+        paging: false,
+        autoWidth: false,
+        rowReorder: true,
+
+        buttons: [
+
+            {
+                text: 'Обновить',
+                action: function(e, dt, node, config) {
+                    dt.ajax.reload();
+                }
+            },
+            {
+                text: 'Добавить',
+                action: function() {
+
+                }
+            },
+
+        ],
+
+        rowCallback: function(row, data) {
+            if (data) {
+
+            }
+        },
+        initComplete: function() {
+
+        },
+
+    }).buttons().container().appendTo('#table_pack_wrapper .col-md-6:eq(0)');
+
+
     $('#select_cat_select').on('change', function(e) {
         var valueSelected = this.value;
         data_list_cat.forEach(function(item, index, array) {
@@ -630,20 +814,42 @@ $(document).ready(function() {
 
 
     });
-    const menu = $(".menu");
-    let menuVisible = false;
-    const toggleMenu = command => {
-        command === "show" ? menu.show(300) : menu.hide(300);
-        menuVisible = !menuVisible;
-    };
-    const setPosition = ({
-                             top,
-                             left
-                         }) => {
-        menu.css("left", `${left}px`);
-        menu.css("top", `${top}px`);
-        toggleMenu("show");
-    };
+
+    $("#price_row").change(function() {
+        if(isNumber($(this).val())){
+            n = $(this).val();
+            n = n * 1;
+            var out = n.toFixed(2);
+            $(this).val(out);
+        }else {
+            $(this).val($(this).val().replace(',', '.'));
+
+            var TESTCURRENCY = $(this).val().toString().match(/(?=[\s\d])(?:\s\.|\d+(?:[.]\d+)*)/gmi);
+            if (TESTCURRENCY.length <= 1) {
+                $(this).val(
+                    parseFloat(TESTCURRENCY.toString().match(/^\d+(?:\.\d{0,2})?/))
+                );
+
+                $(this).val(customParseFloat($(this).val()));
+            } else {
+                $(this).val('Invalid a value!');
+            }
+        }
+    });
+    $("#price_row_add").change(function() {
+        $(this).val($(this).val().replace(',', '.'));
+
+        var TESTCURRENCY = $(this).val().toString().match(/(?=[\s\d])(?:\s\.|\d+(?:[.]\d+)*)/gmi);
+        if (TESTCURRENCY.length <= 1) {
+            $(this).val(
+                parseFloat(TESTCURRENCY.toString().match(/^\d+(?:\.\d{0,2})?/))
+
+            );
+            $(this).val(customParseFloat($(this).val()));
+        } else {
+            $(this).val('Invalid a value!');
+        }
+    });
     window.addEventListener("click", e => {
         if (menuVisible) toggleMenu("hide");
     });
@@ -673,7 +879,7 @@ $(document).ready(function() {
             $("#id_r").val(data['id']);
             //$("#category_row").val(data['category']);
             $("#in_pack_row").val(data['in_pack']);
-            $("#price_row").on('input', function() {
+           /* $("#price_row").on('input', function() {
                 //регулярный выражения проверка денежного формата во избежании ошибки в записи
                 var c = this.selectionStart,
                     r = /[^0-9.,]/gim,
@@ -684,7 +890,7 @@ $(document).ready(function() {
                     c--;
                 }
                 this.setSelectionRange(c, c);
-            });
+            });*/
             $("#price_row").val(formatToRub(data['price']));
         })
         $('#reload_table').on('click', function() {
@@ -721,6 +927,24 @@ $(document).ready(function() {
             $(this).addClass('selected');
         }
     });
+    $('#table_category tbody').on('click', 'tr', function() {
+        var table = $('#table_category').DataTable();
+        if ($(this).hasClass('selected')) {
+            $(this).removeClass('selected');
+        } else {
+            table.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+        }
+    });
+    $('#table_pack tbody').on('click', 'tr', function() {
+        var table = $('#table_pack').DataTable();
+        if ($(this).hasClass('selected')) {
+            $(this).removeClass('selected');
+        } else {
+            table.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+        }
+    });
     $('#button').click(function() {
         table.row('.selected').remove().draw(false);
     });
@@ -749,15 +973,14 @@ $(document).ready(function() {
             }
             this.setSelectionRange(c, c);
         });
+
         $("#price_row").val(data['price']);
 
     });
     $('#modal_edit_save').click(function() {
         var data_from = objectifyForm('save_row');
         data_from['price_row'] = formatToKop(data_from['price_row']);
-
         set_row(data_from);
-
     });
     $('#modal_add_save').click(function() {
         var data_from = objectifyForm('add_row');
@@ -766,8 +989,6 @@ $(document).ready(function() {
         } else {
             data_from['price_row_add'] = '';
         }
-
-
         add_row(data_from);
 
 

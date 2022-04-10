@@ -71,11 +71,6 @@
             <div class="card-body">
                 <div class="tab-content">
                     <div class="active tab-pane" id="pricelist">
-                       <!-- <div class="form-group">
-                        <select class="custom-select form-control-border" id="select_cat_select" name="Категория:">
-                            <option value="0">Все</option>
-                        </select>
-                        </div>-->
                         <table id="table_pricelist" class="cell-border compact " style="width:100%" onmousedown="return false" onselectstart="return false">
                             <thead>
 
@@ -93,17 +88,27 @@
                             </tfoot>
                         </table>
                     </div>
-                    <div class="tab-pane" id="modif" style="height: 100%">
-                        <table id="table_modif" class="table table-striped table-bordered" style="width:100%" >
+                    <div class="tab-pane" id="category_tab" style="height: 100%">
+                        <table id="table_category" class="table table-striped table-bordered" style="width:100%" >
                             <thead>
                             <tr>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
+                                <th>id</th>
+                                <th>name</th>
+                                <th>visible</th>
+                            </tr>
+                            </thead>
+                            <tfoot>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="tab-pane" id="pack_tab" style="height: 100%">
+                        <table id="table_pack" class="table table-striped table-bordered" style="width:100%" >
+                            <thead>
+                            <tr>
+                                <th>id</th>
+                                <th>name</th>
+                                <th>count</th>
+                                <th>type</th>
                             </tr>
                             </thead>
                             <tfoot>
