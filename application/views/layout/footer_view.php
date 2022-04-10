@@ -45,5 +45,3 @@
 <script src="./application/plugins/datatables-buttons/js/buttons.print.min.js"></script>
 <script src="./application/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 <script src="./application/plugins/platform/platform.js"></script>
-<script src="./application/plugins/moment/moment.min.js"></script>
-<script src="./application/plugins/platform/changelist.js"></script>

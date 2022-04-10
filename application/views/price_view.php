@@ -1,4 +1,3 @@
-<div class="content-wrapper">
 <div class="menu" style="display: none">
     <ul class="menu-options">
         <li class="menu-option" id="id_row">ID: </li>
@@ -176,7 +175,6 @@
         <!-- /.modal-content -->
     </div>
     <!-- /.modal-dialog -->
-</div>
 </div>
     <!-- /.modal -->
     <script src="application/plugins/jquery/jquery.min.js"></script>

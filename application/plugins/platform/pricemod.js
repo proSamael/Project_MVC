@@ -232,8 +232,7 @@ $.ajax({
 $(document).ready(function() {
     var buttonCommon = {
         exportOptions: {
-            columns: ':visible',
-            //columns: [1,2,3,4,5],
+            columns: [1,2,3,4,5],
             format: {
                 body: function ( data, row, column, node ) {
                     // Strip $ from salary column to make it numeric
@@ -271,7 +270,7 @@ $(document).ready(function() {
             },
             {
                 data: 'price',
-                title: 'Цена с завода.'
+                title: 'Цена за единицу.'
             },
             {
 
