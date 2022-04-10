@@ -3,7 +3,9 @@
     global.data_cat = new Array();
     global.data_subcat = new Array();
     global.data_pack = new Array();
+    global.data_settings = new Array();
     global.date_clipboard = null;
+    global.data_price_modif = null;
 }(this));
 let Toast = Swal.mixin({
     toast: true,
@@ -46,13 +48,58 @@ function set_row(dataform) {
         });
     });
 }
+function get_price_settings(set_name) {
+    var data_set = {};
+     data_set["set_name"] = set_name
 
+    var result = $.ajax({
+        url: "./index.php?price=get_price_settings",
+        data: data_set,
+        type: 'GET',
+        dataType: 'JSON',
+        success: function (data) {},
+        async: false,
+        error: function (err) {
+            console.log(err);
+        }
+    }).responseJSON;
+    return result // undefine
+   //return data_settings;
+}
+function save_settings(set_name) {
+    console.log(set_name);
+        $.ajax({
+            url: "./index.php?price=save_settings_price",
+            data: set_name,
+            type: 'GET',
+            success: function(data) {
+                let obj = $.parseJSON(data);
+                if (obj.success === 1) {
+                    send_message("warning", "Ошибка записи", obj.error_msg, obj.data_msg);
+                }
+                if (obj.success === 0) {
+                    data_price_modif = obj.data_value;
+                    setTimeout(function() {
+                        $('#table_pricelist').DataTable().ajax.reload();
+                    }, 1500);
+                    send_message("success", "Настройки сохранены", obj.error_msg, obj.data_msg);
+                    $('#price_client_modif_modal').modal('toggle');
+                }
+            },
+            error: function(data) {
+                let obj = $.parseJSON(data)
+                send_message("warning", "Настройки сохранены", obj, "");
+                console.log('Ошибка: ' + obj);
+            }
+        });
+}
 function add_row(dataform) {
     $('#add_row').each(function() {
         $.ajax({
             url: "./index.php?price=add_price_row",
             data: dataform,
             type: 'GET',
+
             success: function(data) {
                 let obj = $.parseJSON(data);
                 if (obj.success === 1) {
@@ -106,7 +153,7 @@ function delete_row(data_id){
 }
 function objectifyForm(formId) {
     //serialize data function
-    console.log("Getting form data...")
+
     var data = {};
     var dataArray = $('#' + formId).serializeArray();
     for (var i = 0; i < dataArray.length; i++) {
@@ -114,24 +161,21 @@ function objectifyForm(formId) {
     }
     return data;
 };
-
 function formatToRub(n) { // конвертируют копейки в рубли
     // in 10050 out 100,50
     n = n / 100;
     var out = n.toFixed(2);
     return out;
-    //console.log(out);
-}
 
+}
 function formatToKop(n) { // конвертируют рубли в копейки
     // in 100.50 , 100,50
     // out 10050
     n = parseFloat(n.replace(/[^0-9]/gim, ''));
-    //console.log(n.toFixed(2));
+
     var out = n.toFixed(2).replace(/\.0+$/, '');
     return out;
 }
-
 function moneyFormat(n) { // Формат рублей
     //in 1100,50 out 1100.5 р.
     n = n.replace(',', '.'); // 1 100.5 р.
@@ -140,7 +184,6 @@ function moneyFormat(n) { // Формат рублей
     out = out.toLocaleString() + ' р.'; // 1 100,5 р.
     return out;
 }
-
 function customParseFloat(number) {
     //Если копейки равны целым десяткам  тгда дописываем в конце 0
     let str = String(number);
@@ -230,9 +273,12 @@ $.ajax({
     }
 });
 $(document).ready(function() {
+
+    var price_settings_modif = get_price_settings('price_client_modif');
+    data_price_modif = price_settings_modif['value'];
     var buttonCommon = {
         exportOptions: {
-            columns: [1,2,3,4,5],
+            columns: ':visible',
             format: {
                 body: function ( data, row, column, node ) {
                     // Strip $ from salary column to make it numeric
@@ -259,7 +305,6 @@ $(document).ready(function() {
                 data: 'category',
                 title: 'Категория'
             },
-
             {
                 data: 'name',
                 title: 'Наименование'
@@ -270,12 +315,15 @@ $(document).ready(function() {
             },
             {
                 data: 'price',
-                title: 'Цена за единицу.'
+                title: 'Цена c завода.'
             },
             {
-
                 data: 'price_in_pack',
                 title: 'Цена за упаковку.'
+            },
+            {
+                data: 'price_client',
+                title: 'Цена клиенту.'
             }
 
         ],
@@ -329,7 +377,7 @@ $(document).ready(function() {
                     this.search('').columns().search('').draw();
                     this.button(0).text('Категория: ВСЕ ');
                 }
-            },
+                },
                 {
                     text: 'ГРУНТЫ',
                     action: function() {
@@ -450,7 +498,7 @@ $(document).ready(function() {
                         }
                     },
                     {
-                        text: 'Цена за ед.',
+                        text: 'Цена c завода.',
                         action: function() {
                             var table = $('#table_pricelist').DataTable();
                             if (table.columns([4]).visible()[0] === false) {
@@ -472,17 +520,29 @@ $(document).ready(function() {
                         }
                     },
                     {
+                        text: 'Цена клиенту',
+                        action: function() {
+                            var table = $('#table_pricelist').DataTable();
+                            if (table.columns([6]).visible()[0] === false) {
+                                table.columns([6]).visible(true);
+                            } else {
+                                table.columns([6]).visible(false);
+                            }
+                        }
+                    },
+                    {
                         text: 'Скрыть все',
                         action: function() {
                             var table = $('#table_pricelist').DataTable();
-                            table.columns([0, 1, 2, 3, 4, 5]).visible(false, false);
+                            table.columns([0, 1, 2, 3, 4, 5, 6]).visible(false, false);
                         }
                     },
                     {
                         text: 'Показать все',
                         action: function() {
                             var table = $('#table_pricelist').DataTable();
-                            table.columns([0, 1, 2, 3, 4, 5]).visible(true, true);
+                            table.columns([0, 1, 2, 3, 4, 5, 6]).visible(true, true);
+                            table.columns([0, 1, 2, 3, 4, 5, 6]).visible(true, true);
                         }
                     },
                 ]
@@ -508,6 +568,17 @@ $(document).ready(function() {
                     } ),
                 ]
             },
+            {
+                text: 'Наценка',
+                action: function(e, dt, node, config) {
+                    let modif_price = {};
+                    modif_price = get_price_settings('price_client_modif');
+
+                    $('#price_client_modif_input').val(modif_price['value']);
+                    $('#price_client_modif_modal').modal('show');
+                    //dt.ajax.reload();//price_client_modif_modal
+                }
+            },
         ],
 
 
@@ -517,21 +588,29 @@ $(document).ready(function() {
 
                     $('td', row).eq(4).addClass('').html(formatToRub(data.price));
                     $('td', row).eq(5).addClass('').html(formatToRub(data.price * data.pack_in_count));
+
+                    var result = (parseInt(data.price) / 100) * parseInt(data_price_modif); //вычисление процентов
+
+                    $('td', row).eq(6).addClass('').html(formatToRub((result + parseInt(data.price)) * parseInt(data.pack_in_count)));
                     if (data.price.match(/^-?\d*(\.\d+)?$/)) {
                         data.price = data.price;
                     } else {
                         data.price = formatToRub(data.price);
                     }
                     data.price_in_pack = formatToRub(data.price * data.pack_in_count);
-                    //data.price_offset = data.price;
+                    data.price_client = formatToRub((result + parseInt(data.price)) * parseInt(data.pack_in_count));
+                    data.price = formatToRub(data.price);
                 } else {
                     $('td', row).eq(4).addClass('').html('0');
                     $('td', row).eq(5).addClass('').html('0');
+                    $('td', row).eq(6).addClass('').html('0');
                 }
 
             }
         },
-        initComplete: function() {},
+        initComplete: function() {
+
+        },
 
     }).buttons().container().appendTo('#table_pricelist_wrapper .col-md-6:eq(0)');
     $('#select_cat_select').on('change', function(e) {
@@ -651,7 +730,7 @@ $(document).ready(function() {
         var data = table.rows(this, {
             selected: true
         }).data()[0];
-        //console.log(data);
+
         $('#select_cat_row option[value=' + data['cat_id'] + ']').prop('selected', true);
         $('#pack_row option[value=' + data['pack_id'] + ']').prop('selected', true);
         $("#name_row").val(data['name']);
@@ -670,7 +749,7 @@ $(document).ready(function() {
             }
             this.setSelectionRange(c, c);
         });
-        $("#price_row").val(formatToRub(data['price']));
+        $("#price_row").val(data['price']);
 
     });
     $('#modal_edit_save').click(function() {
@@ -690,7 +769,18 @@ $(document).ready(function() {
 
 
         add_row(data_from);
-        console.log(data_from);
 
+
+    });
+    $('#save_price_client_modif').click(function() {
+        var data_from = objectifyForm('form_price_client');
+        //if data_from['price_client_modif_input'].isInteger(1)
+        if (data_from['price_client_modif_input'] != 0) {
+            let data_from_save = {};
+            data_from_save['set_name'] = 'price_client_modif';
+            data_from_save['value'] = parseInt(data_from['price_client_modif_input'],10);
+            save_settings(data_from_save);
+        } else {
+        }
     });
 });

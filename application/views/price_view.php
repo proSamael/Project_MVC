@@ -1,3 +1,29 @@
+
+<div class="content-wrapper">
+<div class="modal fade" id="price_client_modif_modal" tabindex="-1" role="dialog" aria-labelledby="price_client_modif_modal_label" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="price_client_modif_modal_label">Процент наценки на выходе</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="form_price_client">
+                    <div class="form-group">
+                        <label for="price_client_modif_input" class="col-form-label">Процент:</label>
+                        <input type="number" class="form-control" id="price_client_modif_input" name="price_client_modif_input">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                <button type="button" class="btn btn-primary" id="save_price_client_modif">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="menu" style="display: none">
     <ul class="menu-options">
         <li class="menu-option" id="id_row">ID: </li>
@@ -60,6 +86,7 @@
                                 <th>name</th>
                                 <th>price</th>
                                 <th>price_in_pack</th>
+                                <th>price_client</th>
                             </tr>
                             </thead>
                             <tfoot>
@@ -70,6 +97,7 @@
                         <table id="table_modif" class="table table-striped table-bordered" style="width:100%" >
                             <thead>
                             <tr>
+                                <th></th>
                                 <th></th>
                                 <th></th>
                                 <th></th>
@@ -175,6 +203,7 @@
         <!-- /.modal-content -->
     </div>
     <!-- /.modal-dialog -->
+</div>
 </div>
     <!-- /.modal -->
     <script src="application/plugins/jquery/jquery.min.js"></script>

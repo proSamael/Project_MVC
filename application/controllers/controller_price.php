@@ -52,7 +52,8 @@ class controller_price extends Controller
 	pr.price,
 	pack.id AS pack_id,
 	pack.count AS pack_in_count,
-	pr.price AS price_in_pack
+	pr.price AS price_in_pack,
+	pr.price AS price_client
 FROM
 	p_product AS pr
 	LEFT JOIN
@@ -84,6 +85,20 @@ FROM
     function action_get_list_pack(){
         $list_pack = $this->db->getAll('SELECT * FROM `p_in_pack`');
         echo json_encode($list_pack);
+    }
+    function action_get_price_settings(){
+        $get_settngs = $_GET;
+        $get_settngs_slice = array_slice($get_settngs, 1);
+        $settings = $get_settngs_slice['set_name'];//"price_client_modif";
+        $result = $this->db->getAll("SELECT * FROM settings WHERE `set_name` = ?s AND `group` = 2",$settings);
+        //$sql = "SELECT * FROM settings WHERE `set_name` = ?s AND `group` = 2";
+        //$sql_result = $this->db->query($sql,$settings);
+       // $result = $this->db->fetch($sql_result);
+        //$result_out = Array();
+        //$result_out = array('settings' => $result);
+
+        $data = array('id' => $result[0]['id'],'set_name' => $result[0]['set_name'],'value' => $result[0]['value']);
+        echo json_encode($data);
     }
     function action_set_price_row(){
         $data = Array();
@@ -130,6 +145,26 @@ FROM
             }else{
                 $result = array('success'=> 1,  'error_msg'=> "Ошибка записи в параметре: Наименование не должно быть пустым", 'data_msg'=> 'Вернулось:'.$data['name']);
             }
+        }
+        echo json_encode($result) ;
+    }
+    function action_save_settings_price(){
+        $save_settngs = $_GET;
+        $save_settngs_slice = array_slice($save_settngs, 1);
+        $set_name = $save_settngs_slice['set_name'];
+        $value = $save_settngs_slice['value'];
+        $data = array('value' => $value);
+        if( $set_name != null && $value != null ) {
+            $sql = "UPDATE `settings` SET ?u WHERE `set_name` = ?s";
+            $this->db->query($sql,$data,$set_name);
+            $sql_result = $this->db->affectedRows();
+            if($sql_result!=0){
+                $result = array('success'=> 0,  'error_msg'=> "Запись успешно сохранена", 'data_msg'=> 'Вернулось: '.$sql_result,  'data_value'=> $value);
+            }else{
+                $result = array('success'=> 1,  'error_msg'=> "Что-то пошло не так: MySQL affected error ", 'data_msg'=> 'Вернулось: '.$sql_result);
+            }
+        }else{
+            $result = array('success'=> 1,  'error_msg'=> "Ошибка чтения data", 'data_msg'=> 'Вернулось: '.$data['value']);
         }
         echo json_encode($result) ;
     }

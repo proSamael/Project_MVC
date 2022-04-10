@@ -1,12 +1,12 @@
 $.get('https://api.github.com/repos/proSamael/Project_MVC/commits', function (data) {
-    console.log(data)
+
 
 
 
     data.forEach(function(item, i, arr) {
 
         string = item.commit.message;
-        str = string.split(/[+]/);
+        str = string.split('\n');
         let str_out = '';
         $.each(str, function(i) {
 
@@ -77,7 +77,7 @@ $.get('https://api.github.com/repos/proSamael/Project_MVC/commits', function (da
                 */
 
 
-        console.log(item)
+
 
     });
 
