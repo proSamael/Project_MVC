@@ -24,6 +24,64 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="category_add_modal" tabindex="-1" role="dialog" aria-labelledby="category_add_modal_label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="category_add_modal_label">Добавить категорию</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                </div>
+                <div class="modal-body">
+                    <form id="add_category">
+                        <input type="text" class="form-control" id="id_category_input" name="id" hidden>
+                        <div class="form-group">
+                            <label for="name_category_input" class="col-form-label">Наименование:</label>
+                            <input type="text" class="form-control" id="name_category_input" name="name">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn btn-primary" id="save_category_add" >Добавить</button>
+                    <button type="button" class="btn btn-primary" id="save_category_edit" >Сохранить</button>
+                </div>
+            </div>
+        </div>
+</div>
+<div class="modal fade" id="pack_add_modal" tabindex="-1" role="dialog" aria-labelledby="pack_add_modal_label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pack_add_modal_label">Добавить упаковку</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+
+                </div>
+                <div class="modal-body">
+                    <form id="add_pack">
+                        <input type="text" class="form-control" id="id_pack_input" name="id" hidden>
+                        <div class="form-group">
+                            <label for="name_category_input" class="col-form-label">Наименование:</label>
+                            <input type="text" class="form-control" id="name_pack_input" name="name">
+                        </div>
+                        <div class="form-group">
+                            <label for="name_category_input" class="col-form-label">Кол-во в упаковке:</label>
+                            <input type="number" class="form-control" id="count_in_pack_input" name="count">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn btn-primary" id="save_pack_add" >Добавить</button>
+                    <button type="button" class="btn btn-primary" id="save_pack_edit">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
 <div class="menu" style="display: none">
     <ul class="menu-options">
         <li class="menu-option" id="id_row">ID: </li>
@@ -41,7 +99,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Удаления записи</h5>
+                <h5 class="modal-title" id="title_delete_modal">Удаления записи</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

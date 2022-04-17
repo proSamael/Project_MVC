@@ -66,6 +66,108 @@ function set_row(dataform) {
         });
     });
 }
+function add_category(dataform) {
+
+        jQuery.ajax({
+            url: "./index.php?price=add_category",
+            data: dataform,
+            type: 'GET',
+            success: function(data) {
+                let obj = $.parseJSON(data);
+                if (obj.success === 1) {
+                    send_message("warning", "Ошибка записи", obj.error_msg, obj.data_msg);
+                }
+                if (obj.success === 0) {
+                    setTimeout(function() {
+                        $('#table_category').DataTable().ajax.reload();
+                    }, 1500);
+                    send_message("success", "Настройки сохранены", obj.error_msg, obj.data_msg);
+                    $('#category_add_modal').modal('toggle');
+                }
+            },
+            error: function(data) {
+                let obj = $.parseJSON(data)
+                send_message("warning", "Ajax Error", obj, "");
+            }
+        });
+
+}
+function add_pack(dataform) {
+
+    jQuery.ajax({
+        url: "./index.php?price=add_pack",
+        data: dataform,
+        type: 'GET',
+        success: function(data) {
+            let obj = $.parseJSON(data);
+            if (obj.success === 1) {
+                send_message("warning", "Ошибка записи", obj.error_msg, obj.data_msg);
+            }
+            if (obj.success === 0) {
+                setTimeout(function() {
+                    $('#table_pack').DataTable().ajax.reload();
+                }, 1500);
+                send_message("success", "Настройки сохранены", obj.error_msg, obj.data_msg);
+                $('#pack_add_modal').modal('toggle');
+            }
+        },
+        error: function(data) {
+            let obj = $.parseJSON(data)
+            send_message("warning", "Ajax Error", obj, "");
+        }
+    });
+
+}
+function edit_pack(dataform) {
+    jQuery.ajax({
+        url: "./index.php?price=edit_pack",
+        data: dataform,
+        type: 'GET',
+        success: function(data) {
+            let obj = $.parseJSON(data);
+            if (obj.success === 1) {
+                send_message("warning", "Ошибка записи", obj.error_msg, obj.data_msg);
+            }
+            if (obj.success === 0) {
+                setTimeout(function() {
+                    $('#table_pack').DataTable().ajax.reload();
+                }, 1500);
+                send_message("success", "Настройки сохранены", obj.error_msg, obj.data_msg);
+                $('#pack_add_modal').modal('toggle');
+            }
+        },
+        error: function(data) {
+            let obj = $.parseJSON(data)
+            send_message("warning", "Ajax Error", obj, "");
+        }
+    });
+
+}
+function edit_category(dataform) {
+    jQuery.ajax({
+        url: "./index.php?price=edit_category",
+        data: dataform,
+        type: 'GET',
+        success: function(data) {
+            let obj = $.parseJSON(data);
+            if (obj.success === 1) {
+                send_message("warning", "Ошибка записи", obj.error_msg, obj.data_msg);
+            }
+            if (obj.success === 0) {
+                setTimeout(function() {
+                    $('#table_category').DataTable().ajax.reload();
+                }, 1500);
+                send_message("success", "Настройки сохранены", obj.error_msg, obj.data_msg);
+                $('#category_add_modal').modal('toggle');
+            }
+        },
+        error: function(data) {
+            let obj = $.parseJSON(data)
+            send_message("warning", "Ajax Error", obj, "");
+        }
+    });
+
+}
 function get_price_settings(set_name) {
     var data_set = {};
      data_set["set_name"] = set_name
@@ -106,8 +208,7 @@ function save_settings(set_name) {
             },
             error: function(data) {
                 let obj = $.parseJSON(data)
-                send_message("warning", "Настройки сохранены", obj, "");
-                console.log('Ошибка: ' + obj);
+                send_message("warning", "Ajax Error", obj, "");
             }
         });
 }
@@ -160,7 +261,7 @@ function delete_row(data_id){
                     $('#table_pricelist').DataTable().ajax.reload();
                 }, 1500);
                 $('#modal_delete').modal('toggle');
-                send_message("success", "Запись успешна удалена", obj.error_msg, obj.data_msg);
+                send_message("success", "Запись успешно удалена", obj.error_msg, obj.data_msg);
             }
 
         },
@@ -168,6 +269,54 @@ function delete_row(data_id){
             send_message("warning", "Jquery Ajax Error", data, '');
         }
 });
+}
+function delete_category(data_id){
+    $.ajax({
+        url: "./index.php?price=delete_category_row",
+        data: data_id,
+        type: 'GET',
+        success: function(data) {
+            let obj = $.parseJSON(data);
+            if (obj.success === 1) {
+                send_message("warning", "Ошибка удаления", obj.error_msg, obj.data_msg);
+            }
+            if (obj.success === 0) {
+                setTimeout(function() {
+                    $('#table_category').DataTable().ajax.reload();
+                }, 1500);
+                $('#modal_delete').modal('toggle');
+                send_message("success", "Запись успешно удалена", obj.error_msg, obj.data_msg);
+            }
+
+        },
+        error: function(data) {
+            send_message("warning", "Jquery Ajax Error", data, '');
+        }
+    });
+}
+function delete_pack(data_id){
+    $.ajax({
+        url: "./index.php?price=delete_pack_row",
+        data: data_id,
+        type: 'GET',
+        success: function(data) {
+            let obj = $.parseJSON(data);
+            if (obj.success === 1) {
+                send_message("warning", "Ошибка удаления", obj.error_msg, obj.data_msg);
+            }
+            if (obj.success === 0) {
+                setTimeout(function() {
+                    $('#table_pack').DataTable().ajax.reload();
+                }, 1500);
+                $('#modal_delete').modal('toggle');
+                send_message("success", "Запись успешно удалена", obj.error_msg, obj.data_msg);
+            }
+
+        },
+        error: function(data) {
+            send_message("warning", "Jquery Ajax Error", data, '');
+        }
+    });
 }
 function objectifyForm(formId) {
     //serialize data function
@@ -220,7 +369,9 @@ function isNumber(value) {
     }
     return !isNaN(value - 0);
 }
+//if( == 'show'){
 
+//}
 $.ajax({
     type: "GET",
     dataType: "json",
@@ -241,7 +392,6 @@ $.ajax({
     }
 
 });
-
 $.ajax({
     type: "GET",
     dataType: "json",
@@ -686,6 +836,12 @@ $(document).ready(function() {
                             text: 'Добавить',
                             action: function() {
 
+                                $('#category_add_modal_label').text('Добавить категорию')
+                                $("#name_category_input").val('');
+                                $('#save_category_edit').hide();
+                                $('#save_category_add').show();
+                                $('#category_add_modal').modal('show');
+
                             }
                         },
 
@@ -780,6 +936,12 @@ $(document).ready(function() {
                 text: 'Добавить',
                 action: function() {
 
+                    $('#pack_add_modal_label').text('Добавить упаковку')
+                    $("#name_pack_input").val('');
+                    $("#count_in_pack_input").val('0');
+                    $('#save_pack_edit').hide();
+                    $('#save_pack_add').show();
+                    $('#pack_add_modal').modal('show');
                 }
             },
 
@@ -795,8 +957,6 @@ $(document).ready(function() {
         },
 
     }).buttons().container().appendTo('#table_pack_wrapper .col-md-6:eq(0)');
-
-
     $('#select_cat_select').on('change', function(e) {
         var valueSelected = this.value;
         data_list_cat.forEach(function(item, index, array) {
@@ -814,7 +974,6 @@ $(document).ready(function() {
 
 
     });
-
     $("#price_row").change(function() {
         if(isNumber($(this).val())){
             n = $(this).val();
@@ -891,7 +1050,7 @@ $(document).ready(function() {
                 }
                 this.setSelectionRange(c, c);
             });*/
-            $("#price_row").val(formatToRub(data['price']));
+            $("#price_row").val(data['price']);
         })
         $('#reload_table').on('click', function() {
             table.ajax.reload();
@@ -982,6 +1141,14 @@ $(document).ready(function() {
         data_from['price_row'] = formatToKop(data_from['price_row']);
         set_row(data_from);
     });
+    $('#save_category_add').click(function() {
+        var data_from = objectifyForm('add_category');
+        add_category(data_from);
+    });
+    $('#save_pack_add').click(function() {
+        var data_from = objectifyForm('add_pack');
+        add_pack(data_from);
+    });
     $('#modal_add_save').click(function() {
         var data_from = objectifyForm('add_row');
         if (data_from['price_row_add'] != 0) {
@@ -1003,5 +1170,119 @@ $(document).ready(function() {
             save_settings(data_from_save);
         } else {
         }
+    });
+
+    $('#table_category').on('contextmenu', 'tbody tr', function(e) {
+        var table = $('#table_category').DataTable();
+        var data = table.rows(this, {
+            selected: true
+        }).data()[0];
+        $('#id_row').text(function() {
+            return "item number " + (data['id']);
+        });
+        let date_clipboard = data['name'];
+        $('#copy_row').on('click', function() {
+            navigator.clipboard.writeText(date_clipboard)
+                .then(() => {
+                    send_message("success", "Запись скопирована в буфер обмена!", data['name'], "Воспользуйтесь функцией 'Вставить' или соч.кл. CTRL+V");
+                })
+                .catch(err => {
+                    send_message("warning", "Clipboard err!", 'Ошибка копирования в буфер обмена', err);
+                });
+        })
+        $('#edit_row').on('click', function() {
+            $('#category_add_modal').modal('show');
+
+            $('#category_add_modal_label').text('Изменить категорию')
+            $("#id_category_input").val(data['id']);
+            $("#name_category_input").val(data['name']);
+            $('#save_category_add').hide();
+            $('#save_category_edit').show();
+
+            $('#save_category_edit').click(function() {
+                var data_from = objectifyForm('add_category');
+                edit_category(data_from);
+            });
+        })
+        $('#reload_table').on('click', function() {
+            table.ajax.reload();
+        })
+        $('#find_cat').on('click', function() {
+            table.search(data['name']).draw();
+        });
+        $('#delete_row').on('click', function() {
+            $('#modal_delete').modal('show');
+            $('#title_delete_modal').text('Удаление записи:'+data['name']);
+            $('#row_delete_data').text(data['name']);
+
+            $('#confirm_delete').on('click', function() {
+                var data_delete = {};
+                data_delete["id"] = data['id'];
+                delete_category(data_delete);
+            });
+        });
+        e.preventDefault();
+        const origin = {
+            left: e.pageX,
+            top: e.pageY
+        };
+        setPosition(origin);
+        return false;
+    });
+    $('#table_pack').on('contextmenu', 'tbody tr', function(e) {
+        var table = $('#table_pack').DataTable();
+        var data = table.rows(this, {
+            selected: true
+        }).data()[0];
+        $('#id_row').text(function() {
+            return "item number " + (data['id']);
+        });
+        let date_clipboard = data['name'];
+        $('#copy_row').on('click', function() {
+            navigator.clipboard.writeText(date_clipboard)
+                .then(() => {
+                    send_message("success", "Запись скопирована в буфер обмена!", data['name'], "Воспользуйтесь функцией 'Вставить' или соч.кл. CTRL+V");
+                })
+                .catch(err => {
+                    send_message("warning", "Clipboard err!", 'Ошибка копирования в буфер обмена', err);
+                });
+        })
+        $('#edit_row').on('click', function() {
+            $('#pack_add_modal').modal('show');
+
+            $('#pack_add_modal_label').text('Изменить упаковку')
+            $("#id_pack_input").val(data['id']);
+            $("#name_pack_input").val(data['name']);
+            $("#count_in_pack_input").val(data['count']);
+            $('#save_pack_add').hide();
+            $('#save_pack_edit').show();
+            $('#save_pack_edit').click(function() {
+                var data_from = objectifyForm('add_pack');
+                edit_pack(data_from);
+            });
+        })
+        $('#reload_table').on('click', function() {
+            table.ajax.reload();
+        })
+        $('#find_cat').on('click', function() {
+            table.search(data['name']).draw();
+        });
+        $('#delete_row').on('click', function() {
+            $('#modal_delete').modal('show');
+            $('#title_delete_modal').text('Удаление записи:'+data['name']);
+            $('#row_delete_data').text(data['name']);
+            $('#confirm_delete').on('click', function() {
+                var data_delete = {};
+                data_delete["id"] = data['id'];
+                delete_pack(data_delete);
+            });
+        });
+        e.preventDefault();
+        const origin = {
+            left: e.pageX,
+            top: e.pageY
+        };
+        setPosition(origin);
+        return false;
     });
 });
