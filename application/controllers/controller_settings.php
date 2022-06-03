@@ -23,7 +23,7 @@ class controller_settings extends Controller
         if ($_SESSION['auth'] == true) {
             $session = $this->db->getRow('SELECT * FROM users WHERE id = ?i LIMIT 0,1', $_SESSION['userid']);
             $session_data = $session;
-            //var_dump($session_data);
+            #var_dump($session_data);
             $this->view->generate('settings_view.php', 'template_view.php', true, null, $session_data, $settings);
             //$this->view->generate_layout('head_view.php', 'navbar_view.php', 'sidebar_view.php',1,'page_tamplate_view.php','home_view.php','footer_view.php', $session_data);
         } else {
@@ -68,5 +68,31 @@ class controller_settings extends Controller
         echo $result;
 
 
+    }
+    function action_set_group_settings(){
+        $data = Array();
+        $result ='';
+        $set_group_settings =  $_GET;
+        $set_group_settings = array_slice($set_group_settings, 1);
+        $id_group = $set_group_settings['id'];
+        $set_group_settings = array_slice($set_group_settings, 1);
+        if($id_group >= 0) {
+            $group_settings = $this->db->getAll('SELECT * FROM `roles` WHERE `id` = ?i', $id_group);
+            foreach ($group_settings[0] as $key => $value) {
+                if( in_array( $key ,array_keys($set_group_settings)) )
+                {
+                    $sql  = "UPDATE `roles` SET ?n = ?s WHERE `id` = ?i;";
+
+                    $this->db->query($sql,$key,$set_group_settings[$key],$id_group);
+
+                    $data=Array("data" => $set_group_settings, "resultCode" => 0, "result_msg" => 'Настройки группы "'.$group_settings[0]['description'].'" успешно сохранены'); //associative array
+                }else{
+                    $data=Array("data" => $key, "resultCode" => 1, "result_msg" => 'Error save to param :'.$key); //associative array
+                }
+            }
+        }else{
+            $data=Array("data" => $id_group, "resultCode" => 1, "result_msg" => 'Error id role :'.$id_group); //associative array
+        }
+        echo json_encode($data);
     }
 }

@@ -4,6 +4,7 @@
     global.data_settings = new Array();
     global.data_role = new Array();
     global.data_form = new Array();
+
 }(this));
 let data_settings = new Array();
 let Toast = Swal.mixin({
@@ -17,6 +18,52 @@ let Toast = Swal.mixin({
 toastr.options = {
 
 }
+function get_group_settings(list_role, role_id){
+
+    $("#group_price_setting").show();
+
+    $.each(list_role, function(key, value) {
+        if(value.id === role_id){
+            if(value['p_list_view'] == 1){
+                document.getElementById('p_list_view').checked = true;
+            }else{
+                document.getElementById('p_list_view').checked = false;
+            }
+            if(value['p_list_edit'] == 1){
+                document.getElementById('p_list_edit').checked = true;
+            }else{
+                document.getElementById('p_list_edit').checked = false;
+            }
+            if(value['p_list_modif'] == 1){
+                document.getElementById('p_list_modif').checked = true;
+            }else{
+                document.getElementById('p_list_modif').checked = false;
+            }
+            if(value['p_cat_view'] == 1){
+                document.getElementById('p_cat_view').checked = true;
+            }else{
+                document.getElementById('p_cat_view').checked = false;
+            }
+            if(value['p_cat_edit'] == 1){
+                document.getElementById('p_cat_edit').checked = true;
+            }else{
+                document.getElementById('p_cat_edit').checked = false;
+            }
+            if(value['p_pack_view'] == 1){
+                document.getElementById('p_pack_view').checked = true;
+            }else{
+                document.getElementById('p_pack_view').checked = false;
+            }
+            if(value['p_pack_edit'] == 1){
+                document.getElementById('p_pack_edit').checked = true;
+            }else{
+                document.getElementById('p_pack_edit').checked = false;
+            }
+        }
+
+    });
+
+}
 function send_message(icon,title,message,footer) {
     Toast.fire({
         icon: icon,
@@ -25,20 +72,76 @@ function send_message(icon,title,message,footer) {
         footer: footer
     });
 };
-$.ajax({
-    type: "GET",
-    dataType: "json",
-    url: "./index.php?",
-    data: {"settings":"get_listrole"},
-    success: function (role_array) {
-        data_role = role_array;
-        if (~role_array) {
-            $.each(data_role, function(key, value) {
-                $('#select_roleuser').append($("<option></option>").attr("value", value.id).text(value.description));
-            });
+function autosave(dataform) {
+
+    jQuery.ajax({
+        url: "./index.php?settings=set_reg_settings",
+        data: dataform,
+        type: 'GET',
+        success: function (data) {
+            send_message("success","Настройки сохранены",data,"");
+
+        },
+        error: function(data) {
+            send_message("warning","Настройки сохранены",data,"");
+            console.log('Ошибка: ' + data);
         }
-    }
-});
+    });
+
+}
+function set_group_settings(data_form_group, id_role) {
+console.log(data_form_group)
+    jQuery.ajax({
+        url: "./index.php?settings=set_group_settings&id="+id_role,
+        data: data_form_group,
+        type: 'GET',
+        success: function (data) {
+            let obj = $.parseJSON(data);
+            if (obj.resultCode === 1) {
+                send_message("warning", "Ошибка сохранения", obj.result_msg, '');
+            }
+            if (obj.resultCode === 0) {
+                setTimeout(function() {
+                    $('#table_pricelist').DataTable().ajax.reload();
+                }, 1500);
+                $('#modal_delete').modal('toggle');
+                send_message("success", "Изменения успешно сохранены", obj.result_msg, '');
+            }
+
+        },
+        error: function(data) {
+            send_message("warning", "Jquery Ajax Error", data, '');
+            console.log('Ошибка: ' + data);
+        }
+    });
+
+}
+function get_role_grops(){
+        $.ajax({
+            type: "GET",
+            dataType: "json",
+            url: "./index.php?",
+            data: {"settings":"get_listrole"},
+            success: function (role_array) {
+                data_role = role_array;
+                if (~role_array) {
+                    role_length = data_role.length;
+                    $('#select_group').empty()
+                    $('#select_group').append($("<option></option>").attr("value", "-1").text("Выбрать группу"));
+                    $.each(data_role, function(key, value) {
+
+                        $('#select_group').append($("<option></option>").attr("value", value.id).text(value.description));
+                        $('#select_roleuser').append($("<option></option>").attr("value", value.id).text(value.description));
+                    });
+                    $('#role_count').text(role_length)
+
+                }
+            }
+        });
+}
+
+
+get_role_grops();
 $.ajax({
     type: "GET",
     dataType: "json",
@@ -73,26 +176,14 @@ $.ajax({
 
     }
 });
-function autosave(dataform) {
-    jQuery('form').each(function () {
-        jQuery.ajax({
-            url: "./index.php?settings=set_reg_settings",
-            data: dataform,
-            type: 'GET',
-            success: function (data) {
-                send_message("success","Настройки сохранены",data,"");
-
-            },
-            error: function(data) {
-                send_message("warning","Настройки сохранены",data,"");
-                console.log('Ошибка: ' + data);
-            }
-        });
-    });
-}
+$( "#select_group" ).change(function() {
+    get_group_settings(data_role,  $( "#select_group" ).val());
+    get_role_grops()
+});
 $(document).ready(function() {
-    $("form").change(function() {
-        var dataform =  $('form').serializeArray();
+    $("#group_price_setting").hide();
+    $("#reg_login_settings").change(function() {
+        var dataform =  $("#reg_login_settings").serializeArray()
         names = (function(){
             var n = [],
                 l = dataform.length - 1;
@@ -111,4 +202,22 @@ $(document).ready(function() {
         set_array_dataform = dataform.filter(v => v.name != "");
         autosave(set_array_dataform)
     });
+    $("#group_price_setting").change(function() {
+        var checkedAry= [];
+        $.each($("input[name='chek_form_group']"), function () {
+            if ($(this).is(':checked')){
+
+                checkedAry.push({name: $(this).attr('id'), value: 1});
+            }else{
+                checkedAry.push({name: $(this).attr('id'), value: 0});
+            }
+        });
+        // Проверяем состояние чекбоксов после любого изменени
+        // checkedAry ассоциативный массив группы chek_form_group 1 - выбран 0 -нет
+        //console.log(checkedAry)
+        set_group_settings(checkedAry, $( "#select_group" ).val());
+    });
+
+
+
 });

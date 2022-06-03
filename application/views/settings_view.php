@@ -12,7 +12,9 @@
                             <li class="nav-item">
                                 <a class="nav-link active" id="custom-tabs-one-profile-tab" data-toggle="pill" href="#custom-tabs-one-profile" role="tab" aria-controls="custom-tabs-one-profile" aria-selected="true">Регистрация и вход</a>
                             </li>
-
+                            <li class="nav-item">
+                                <a class="nav-link" id="custom-tabs-one-groups-tab" data-toggle="pill" href="#custom-tabs-one-groups" role="tab" aria-controls="custom-tabs-one-groups" aria-selected="false">Группы пользователей</a>
+                            </li>
 
                         </ul>
                     </div>
@@ -21,7 +23,7 @@
                           <div class="tab-pane fade" id="custom-tabs-one-home" role="tabpanel" aria-labelledby="custom-tabs-one-home-tab">
                           </div>
                           <div class="tab-pane fade active show" id="custom-tabs-one-profile" role="tabpanel" aria-labelledby="custom-tabs-one-profile-tab">
-                              <form>
+                              <form id="reg_login_settings">
                               <div class="form-group row">
                                   <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
                                       <input type="checkbox" class="custom-control-input" id="switch_regon" name="<?php echo $settings['reg_active']['set_name'] ?>" >
@@ -73,6 +75,116 @@
                               </div>
                               </form>
                           </div>
+                            <div class="tab-pane fade" id="custom-tabs-one-groups" role="tabpanel" aria-labelledby="custom-tabs-one-groups-tab">
+
+
+                                        <div class="row">
+                                            <div class="col-md-3">
+
+                                                <!-- Profile Image -->
+                                                <div class="card card-primary card-outline">
+                                                    <div class="card-body box-profile">
+                                                        <div class="text-center">
+
+                                                                <label for="select_group" class="col-sm-12 col-form-label" title="">Выберите группу</label>
+                                                                <div class="col-sm-12">
+                                                                    <select class="custom-select form-control-border" id="select_group" name="">
+                                                                    </select>
+                                                                </div>
+
+                                                        </div>
+
+                                                        <p class="text-muted text-center"></p>
+
+                                                        <ul class="list-group list-group-unbordered mb-3">
+                                                            <li class="list-group-item">
+                                                                <b>Всего пользователей</b> <a class="float-right">0</a>
+                                                            </li>
+                                                            <li class="list-group-item">
+                                                                <b>Всего групп</b> <a class="float-right" id="role_count">0</a>
+                                                            </li>
+                                                            <li class="list-group-item">
+                                                                <b>Польз. в выбр. группе</b> <a class="float-right">0</a>
+                                                            </li>
+                                                        </ul>
+
+
+                                                    </div>
+                                                    <!-- /.card-body -->
+                                                </div>
+                                                <!-- /.card -->
+
+
+
+                                                <!-- /.card -->
+                                            </div>
+                                            <!-- /.col -->
+                                            <div class="col-md-9">
+                                                <div class="card">
+                                                    <div class="card-header p-2">
+                                                        <ul class="nav nav-pills">
+                                                            <li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab">Общие</a></li>
+                                                            <li class="nav-item"><a class="nav-link" href="#pricelist" data-toggle="tab">Прайс лист</a></li>
+                                                            <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Настройки</a></li>
+                                                        </ul>
+                                                    </div><!-- /.card-header -->
+                                                    <div class="card-body">
+                                                        <div class="tab-content">
+                                                            <div class="active tab-pane" id="activity">
+
+                                                            </div>
+                                                            <!-- /.tab-pane -->
+                                                            <div class="tab-pane" id="pricelist">
+                                                                <form id="group_price_setting" class="my-form hide">
+
+                                                                    <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                                                                        <input type="checkbox" class="custom-control-input" id="p_list_view" name="chek_form_group" value="p_list_view" >
+                                                                        <label class="custom-control-label" for="p_list_view" title=" ">Просмотр прайс листа</label>
+                                                                    </div>
+                                                                    <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                                                                        <input type="checkbox" class="custom-control-input" id="p_list_edit" name="chek_form_group" value="p_list_edit" >
+                                                                        <label class="custom-control-label" for="p_list_edit" title=" ">Редактирование прайс листа</label>
+                                                                    </div>
+                                                                    <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                                                                        <input type="checkbox" class="custom-control-input" id="p_list_modif" name="chek_form_group" value="p_list_modif" >
+                                                                        <label class="custom-control-label" for="p_list_modif" title=" ">Редактирование модификатора</label>
+                                                                    </div>
+                                                                    <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                                                                        <input type="checkbox" class="custom-control-input" id="p_cat_view" name="chek_form_group" value="p_cat_view" >
+                                                                        <label class="custom-control-label" for="p_cat_view" title=" ">Просмотр категорий</label>
+                                                                    </div>
+                                                                    <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                                                                        <input type="checkbox" class="custom-control-input" id="p_cat_edit" name="chek_form_group" value="p_cat_edit" >
+                                                                        <label class="custom-control-label" for="p_cat_edit" title=" ">Редактирование категорий</label>
+                                                                    </div>
+                                                                    <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                                                                        <input type="checkbox" class="custom-control-input" id="p_pack_view" name="chek_form_group" value="p_pack_view" >
+                                                                        <label class="custom-control-label" for="p_pack_view" title=" ">Просмотр типа упаковки</label>
+                                                                    </div>
+                                                                    <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                                                                        <input type="checkbox" class="custom-control-input" id="p_pack_edit" name="chek_form_group" value="p_pack_edit" >
+                                                                        <label class="custom-control-label" for="p_pack_edit" title=" ">Редактирование типа упаковки</label>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                            <!-- /.tab-pane -->
+
+                                                            <div class="tab-pane" id="settings">
+
+                                                            </div>
+                                                            <!-- /.tab-pane -->
+                                                        </div>
+                                                        <!-- /.tab-content -->
+                                                    </div><!-- /.card-body -->
+                                                </div>
+                                                <!-- /.card -->
+                                            </div>
+                                            <!-- /.col -->
+                                        </div>
+                                        <!-- /.row -->
+
+
+                            </div>
                         </div>
                     </div>
                     <!-- /.card -->

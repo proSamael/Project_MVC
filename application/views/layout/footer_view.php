@@ -32,6 +32,7 @@
 <script src="./js/demo.js"></script>
 
 <!-- DataTables  & Plugins -->
+
 <script src="./application/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="./application/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 <script src="./application/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>

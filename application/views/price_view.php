@@ -270,6 +270,7 @@
 </div>
     <!-- /.modal -->
     <script src="application/plugins/jquery/jquery.min.js"></script>
+    <script src="application/plugins/jquery-cookie/jquery.cookie-1.4.1.min.js"></script>
     <script src="application/plugins/sweetalert2/sweetalert2.min.js"></script>
     <script src="application/plugins/toastr/toastr.min.js"></script>
     <script src="application/plugins/platform/pricemod.js"></script>

@@ -12,7 +12,17 @@ class controller_price extends Controller
         $this->view = new View();
         $this->db = new Database();
     }
+    private function chek_token($t){
+        $token_pass = $this->db->getRow('SELECT * FROM users WHERE token = ?s LIMIT 0,1', $t);
+        if(isset($token_pass) && ($token_pass != false)){
+           return true;
+        }else{
+           return false;
+        }
+    }
+    private function method_allow($t,$method){
 
+    }
     private function array_push_assoc($array, $key, $value)
     {
         $array[$key] = $value;
@@ -41,52 +51,70 @@ class controller_price extends Controller
             Route::logout();
         }
     }
+
     function action_get_list_price(){
-        $list_price = $this->db->getAll('SELECT
-	pr.id, 
-	cat.`name` AS category,
-	cat.`id` AS cat_id, 
-	subcat.`name` AS subcategory, 
-	pr.`name`, 
-	pack.`name` AS in_pack, 
-	pr.price,
-	pack.id AS pack_id,
-	pack.count AS pack_in_count,
-	pr.price AS price_client,
-	pr.price AS price_in_pack_client
-FROM
-	p_product AS pr
-	LEFT JOIN
-	p_category AS cat
-	ON 
-		pr.category = cat.id
-	LEFT JOIN
-	p_subcategory AS subcat
-	ON 
-		pr.subcategory = subcat.id
-	LEFT JOIN
-	p_in_pack AS pack
-	ON 
-		pr.count_in_pack = pack.id ;');
-
-
-        $data=Array("data" => $list_price); //associative array
-
+        $t =  $_GET['t'];
+        if($this->chek_token($t)){
+            $list_price = $this->db->getAll('SELECT
+        pr.id, 
+        cat.`name` AS category,
+        cat.`id` AS cat_id, 
+        subcat.`name` AS subcategory, 
+        pr.`name`, 
+        pack.`name` AS in_pack, 
+        pr.price,
+        pack.id AS pack_id,
+        pack.count AS pack_in_count,
+        pr.price AS price_client,
+        pr.price AS price_in_pack_client
+    FROM
+        p_product AS pr
+        LEFT JOIN
+        p_category AS cat
+        ON 
+            pr.category = cat.id
+        LEFT JOIN
+        p_subcategory AS subcat
+        ON 
+            pr.subcategory = subcat.id
+        LEFT JOIN
+        p_in_pack AS pack
+        ON 
+            pr.count_in_pack = pack.id ;');
+            $data=Array("data" => $list_price, "resultCode" => 0, "result_msg" => 'OK'); //associative array
+        }else{
+            $data=Array("data" => '', "resultCode" => 1, "result_msg" => 'No token avalible'); //associative array
+        }
         echo json_encode($data);
     }
     function action_get_list_cat(){
-        $list_cat = $this->db->getAll('SELECT * FROM `p_category`');
-
-        echo json_encode($list_cat);
+        $t =  $_GET['t'];
+        if($this->chek_token($t)) {
+            $list_cat = $this->db->getAll('SELECT * FROM `p_category`');
+            $data=Array("data" => $list_cat, "resultCode" => 0, "result_msg" => 'OK'); //associative array
+        }else{
+            $data=Array("data" => '', "resultCode" => 1, "result_msg" => 'No token avalible'); //associative array
+        }
+        echo json_encode($data);
     }
     function action_get_list_category(){
-        $list_cat = $this->db->getAll('SELECT * FROM `p_category`');
-        $data=Array("data" => $list_cat); //associative array
+        $t =  $_GET['t'];
+        if($this->chek_token($t)) {
+            $list_cat = $this->db->getAll('SELECT * FROM `p_category`');
+            $data=Array("data" => $list_cat, "resultCode" => 0, "result_msg" => 'OK'); //associative array
+        }else{
+            $data=Array("data" => '', "resultCode" => 1, "result_msg" => 'No token avalible'); //associative array
+        }
         echo json_encode($data);
     }
     function action_get_list_in_pack(){
-        $list_cat = $this->db->getAll('SELECT * FROM `p_in_pack`');
-        $data=Array("data" => $list_cat); //associative array
+        $t =  $_GET['t'];
+        if($this->chek_token($t)) {
+            $list_pack = $this->db->getAll('SELECT * FROM `p_in_pack`');
+            $data=Array("data" => $list_pack, "resultCode" => 0, "result_msg" => 'OK'); //associative array
+        }else{
+            $data=Array("data" => '', "resultCode" => 1, "result_msg" => 'No token avalible'); //associative array
+        }
         echo json_encode($data);
     }
     function action_get_list_subcat(){

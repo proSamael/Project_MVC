@@ -18,6 +18,8 @@ let Toast = Swal.mixin({
 toastr.options = {}
 const menu = $(".menu");
 let menuVisible = false;
+let token = $.cookie('password_cookie_token');
+
 const toggleMenu = command => {
     command === "show" ? menu.show(300) : menu.hide(300);
     menuVisible = !menuVisible;
@@ -369,6 +371,18 @@ function isNumber(value) {
     }
     return !isNaN(value - 0);
 }
+function request_responses(response){
+    switch(response['resultCode']) {
+        case 1:
+            send_message("warning", "Ошибка проверки подлинности", 'Сервер ответил отказом в данном действии.' , 'Result: '+response['result_msg']);
+            break;
+        case 2:
+            //execute code block 2
+            break;
+        default:
+        // code to be executed if n is different from case 1 and 2
+    }
+}
 //if( == 'show'){
 
 //}
@@ -443,8 +457,8 @@ $(document).ready(function() {
         ajax: {
             type: 'GET',
             dataType: "json",
-            url: './index.php?price=get_list_price',
-            //dataSrc: 'data'
+            url: './index.php?price=get_list_price'+'&t='+token,
+            dataSrc: 'data'
         },
 
         columns: [{
@@ -756,8 +770,10 @@ $(document).ready(function() {
 
             }
         },
-        initComplete: function() {
-
+        initComplete: function(data) {
+            if(data.json['resultCode'] >= 1){
+                request_responses(data.json);
+            }
         },
 
     }).buttons().container().appendTo('#table_pricelist_wrapper .col-md-6:eq(0)');
@@ -765,8 +781,8 @@ $(document).ready(function() {
         ajax: {
             type: 'GET',
             dataType: "json",
-            url: './index.php?price=get_list_category',
-            //dataSrc: 'data'
+            url: './index.php?price=get_list_category'+'&t='+token,
+            dataSrc: 'data'
         },
 
         columns: [
@@ -852,8 +868,10 @@ $(document).ready(function() {
 
             }
         },
-        initComplete: function() {
-
+        initComplete: function(data) {
+            if(data.json['resultCode'] >= 1){
+                request_responses(data.json);
+            }
         },
 
     }).buttons().container().appendTo('#table_category_wrapper .col-md-6:eq(0)');
@@ -861,8 +879,8 @@ $(document).ready(function() {
         ajax: {
             type: 'GET',
             dataType: "json",
-            url: './index.php?price=get_list_in_pack',
-            //dataSrc: 'data'
+            url: './index.php?price=get_list_in_pack'+'&t='+token,
+            dataSrc: 'data'
         },
 
         columns: [
@@ -952,8 +970,10 @@ $(document).ready(function() {
 
             }
         },
-        initComplete: function() {
-
+        initComplete: function(data) {
+            if(data.json['resultCode'] >= 1){
+                request_responses(data.json);
+            }
         },
 
     }).buttons().container().appendTo('#table_pack_wrapper .col-md-6:eq(0)');
