@@ -116,7 +116,7 @@ console.log(data_form_group)
     });
 
 }
-function get_role_grops(){
+function get_role_grops(id_role){
         $.ajax({
             type: "GET",
             dataType: "json",
@@ -136,6 +136,8 @@ function get_role_grops(){
                     $('#role_count').text(role_length)
 
                 }
+                //$("#select_group :last").attr("selected", "selected");
+                $('#select_group option[value='+id_role +']').attr('selected', 'selected');
             }
         });
 }
@@ -177,8 +179,10 @@ $.ajax({
     }
 });
 $( "#select_group" ).change(function() {
+    let_last_val = $( "#select_group" ).val();
     get_group_settings(data_role,  $( "#select_group" ).val());
-    get_role_grops()
+    get_role_grops($( "#select_group" ).val());
+
 });
 $(document).ready(function() {
     $("#group_price_setting").hide();

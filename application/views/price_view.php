@@ -120,9 +120,9 @@
             <div class="card-header p-2">
                 <ul class="nav nav-pills">
                     <li class="nav-item"><a class="nav-link active" href="#pricelist" data-toggle="tab">Прайс Лист</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#category_tab" data-toggle="tab">Категории</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#pack_tab" data-toggle="tab">Упаковка</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#settings_tab" data-toggle="tab">Настройка таблицы</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#category_tab" data-toggle="tab" id="view_category">Категории</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#pack_tab" data-toggle="tab" id="view_pack">Упаковка</a></li>
+                    <!-- <li class="nav-item"><a class="nav-link" href="#settings_tab" data-toggle="tab">Настройка таблицы</a></li> -->
 
                 </ul>
             </div><!-- /.card-header -->

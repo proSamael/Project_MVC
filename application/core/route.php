@@ -56,40 +56,40 @@ class Route
 		if(file_exists($controller_path))
 		{
 			include "application/controllers/".$controller_file;
-		}
-		//else
-		//{
+            // создаем контроллер
+            $controller = new $controller_name;
+            $action_ex = $action_name;
+            if(method_exists($controller, $action_ex))
+            {
+                // вызываем действие контроллера
+                $controller->$action_ex();
+            }
+            else
+            {
+                // здесь также разумнее было бы кинуть исключение
+                Route::ErrorPage404();
+            }
+        }
+		else
+		{
 			/*
 			правильно было бы кинуть здесь исключение,
 			но для упрощения сразу сделаем редирект на страницу 404
 			*/
             //echo $controller_path;
-		//	Route::ErrorPage404();
-		//}
-		
-		// создаем контроллер
-		$controller = new $controller_name;
-		$action_ex = $action_name;
-		
-		if(method_exists($controller, $action_ex))
-		{
-			// вызываем действие контроллера
-			$controller->$action_ex();
+			Route::ErrorPage404();
 		}
-		//else
-		//{
-		//	// здесь также разумнее было бы кинуть исключение
-		//	Route::ErrorPage404();
-		//}
+		
+
+
 	
 	}
 
 	function ErrorPage404()
 	{
-        $host = GlobalAR::$AR->host;
-        header('HTTP/1.1 404 Not Found');
-		header("Status: 404 Not Found");
-		header('Location:'.$host.'404');
+        include "application/controllers/controller_404.php";
+        $controller = new Controller_404;
+        $controller->action_index();
     }
     function logout(){
         $host = GlobalAR::$AR->host;

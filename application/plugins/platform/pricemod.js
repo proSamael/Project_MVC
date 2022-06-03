@@ -7,6 +7,7 @@
     global.date_clipboard = null;
     global.data_price_modif = null;
 }(this));
+let data_access = new Array();
 let Toast = Swal.mixin({
     toast: true,
     position: 'top-end',
@@ -20,6 +21,21 @@ const menu = $(".menu");
 let menuVisible = false;
 let token = $.cookie('password_cookie_token');
 
+
+function get_role_access(t) {
+    var result;
+    $.ajax ({
+        url: "./index.php?price=get_role_access&t="+t,
+        type: 'GET',
+        dataType: 'JSON',
+        async: false,
+        success: function(data) {
+            result = data;
+        }
+    });
+    return result;
+
+}
 const toggleMenu = command => {
     command === "show" ? menu.show(300) : menu.hide(300);
     menuVisible = !menuVisible;
@@ -46,32 +62,41 @@ function isINT(x, y) {
     }
     return false;
 }
-function set_row(dataform) {
+function set_row(dataform,t) {
     jQuery('form').each(function() {
         jQuery.ajax({
-            url: "./index.php?price=set_price_row",
+            url: "./index.php?price=set_price_row&t="+t,
             data: dataform,
             type: 'GET',
             success: function(data) {
                 $('#modal-lg').modal('toggle')
-                send_message("success", "Настройки сохранены", data, "");
+                let obj = $.parseJSON(data);
+                if (obj.resultCode === 1) {
+                    send_message("warning", "Ошибка записи", obj.result_msg, obj.data);
+                }
+                if (obj.resultCode === 0) {
+                    if(obj.data > 0){
+                        send_message("success", "Запись сохранена", obj.result_msg, obj.data);
+                        setTimeout(function () {
+                            $('#table_pricelist').DataTable().ajax.reload();
+                        }, 1500);
+                    }else{
+                        send_message("warning", "Ошибка записи", "Запись не была изменена", "");
+                    }
 
-                setTimeout(function() {
-                    $('#table_pricelist').DataTable().ajax.reload();
-                }, 1500);
-
+                }
             },
             error: function(data) {
-                send_message("warning", "Настройки сохранены", data, "");
+                send_message("warning", "Error jQuery Ajax ", data, "");
                 console.log('Ошибка: ' + data);
             }
         });
     });
 }
-function add_category(dataform) {
+function add_category(dataform,t) {
 
         jQuery.ajax({
-            url: "./index.php?price=add_category",
+            url: "./index.php?price=add_category&t="+t,
             data: dataform,
             type: 'GET',
             success: function(data) {
@@ -94,10 +119,10 @@ function add_category(dataform) {
         });
 
 }
-function add_pack(dataform) {
+function add_pack(dataform,t) {
 
     jQuery.ajax({
-        url: "./index.php?price=add_pack",
+        url: "./index.php?price=add_pack&t="+t,
         data: dataform,
         type: 'GET',
         success: function(data) {
@@ -120,9 +145,9 @@ function add_pack(dataform) {
     });
 
 }
-function edit_pack(dataform) {
+function edit_pack(dataform,t) {
     jQuery.ajax({
-        url: "./index.php?price=edit_pack",
+        url: "./index.php?price=edit_pack&t="+t,
         data: dataform,
         type: 'GET',
         success: function(data) {
@@ -145,9 +170,9 @@ function edit_pack(dataform) {
     });
 
 }
-function edit_category(dataform) {
+function edit_category(dataform,t) {
     jQuery.ajax({
-        url: "./index.php?price=edit_category",
+        url: "./index.php?price=edit_category&t="+t,
         data: dataform,
         type: 'GET',
         success: function(data) {
@@ -188,10 +213,10 @@ function get_price_settings(set_name) {
     return result // undefine
    //return data_settings;
 }
-function save_settings(set_name) {
+function save_settings(set_name,t) {
     console.log(set_name);
         $.ajax({
-            url: "./index.php?price=save_settings_price",
+            url: "./index.php?price=save_settings_price&t="+t,
             data: set_name,
             type: 'GET',
             success: function(data) {
@@ -214,10 +239,10 @@ function save_settings(set_name) {
             }
         });
 }
-function add_row(dataform) {
+function add_row(dataform,t) {
     $('#add_row').each(function() {
         $.ajax({
-            url: "./index.php?price=add_price_row",
+            url: "./index.php?price=add_price_row&t="+t,
             data: dataform,
             type: 'GET',
 
@@ -248,9 +273,9 @@ function add_row(dataform) {
         });
     });
 }
-function delete_row(data_id){
+function delete_row(data_id,t){
     $.ajax({
-        url: "./index.php?price=delete_price_row",
+        url: "./index.php?price=delete_price_row&t="+t,
         data: data_id,
         type: 'GET',
         success: function(data) {
@@ -272,9 +297,9 @@ function delete_row(data_id){
         }
 });
 }
-function delete_category(data_id){
+function delete_category(data_id,t){
     $.ajax({
-        url: "./index.php?price=delete_category_row",
+        url: "./index.php?price=delete_category_row&t="+t,
         data: data_id,
         type: 'GET',
         success: function(data) {
@@ -296,9 +321,9 @@ function delete_category(data_id){
         }
     });
 }
-function delete_pack(data_id){
+function delete_pack(data_id,t){
     $.ajax({
-        url: "./index.php?price=delete_pack_row",
+        url: "./index.php?price=delete_pack_row&t="+t,
         data: data_id,
         type: 'GET',
         success: function(data) {
@@ -377,15 +402,26 @@ function request_responses(response){
             send_message("warning", "Ошибка проверки подлинности", 'Сервер ответил отказом в данном действии.' , 'Result: '+response['result_msg']);
             break;
         case 2:
-            //execute code block 2
+            //send_message("warning", "Ошибка приватности", 'У Вас нет прав на это действие.' , 'Result: '+response['result_msg']);
+
             break;
         default:
         // code to be executed if n is different from case 1 and 2
     }
 }
-//if( == 'show'){
-
-//}
+data_access = get_role_access(token);
+function get_acc_p(data_arr, key_p){
+    $.each(data_arr, function(key, value) {
+        if(key === key_p){
+            if(value != 0){
+                result = 'active';
+            }else{
+                result = '';
+            }
+        }
+    });
+    return result.toString();
+}
 $.ajax({
     type: "GET",
     dataType: "json",
@@ -437,7 +473,7 @@ $.ajax({
     }
 });
 $(document).ready(function() {
-
+    $.fn.dataTable.Buttons.defaults.dom.button.className = 'btn';
     var price_settings_modif = get_price_settings('price_client_modif');
     data_price_modif = price_settings_modif['value'];
     var buttonCommon = {
@@ -608,6 +644,7 @@ $(document).ready(function() {
                 }
             },
             {
+                className : get_acc_p(data_access, 'p_list_edit') ? 'btn-sm' : 'btn-sm d-none',
                 text: 'Добавить',
                 action: function() {
                     $('#modal-add').modal('show')
@@ -734,6 +771,7 @@ $(document).ready(function() {
                 ]
             },
             {
+                className : get_acc_p(data_access, 'p_list_modif') ? 'btn-sm' : 'btn-sm d-none',
                 text: 'Наценка',
                 action: function(e, dt, node, config) {
                     let modif_price = {};
@@ -777,6 +815,8 @@ $(document).ready(function() {
         },
 
     }).buttons().container().appendTo('#table_pricelist_wrapper .col-md-6:eq(0)');
+    //$.fn.dataTable.table_category.errMode = 'throw';
+
     $('#table_category').DataTable({
         ajax: {
             type: 'GET',
@@ -799,7 +839,6 @@ $(document).ready(function() {
                 title: 'Отображать'
             }
         ],
-
         language: {
             "decimal": "",
             "emptyTable": "No data available in table",
@@ -841,27 +880,26 @@ $(document).ready(function() {
         rowReorder: true,
 
         buttons: [
+            {
+                text: 'Обновить',
+                action: function(e, dt, node, config) {
+                    dt.ajax.reload();
+                }
+            },
+            {
+                className : get_acc_p(data_access, 'p_cat_edit') ? 'btn-sm' : 'btn-sm disabled',
+                text: 'Добавить',
+                action: function() {
 
-                        {
-                            text: 'Обновить',
-                            action: function(e, dt, node, config) {
-                                dt.ajax.reload();
-                            }
-                        },
-                        {
-                            text: 'Добавить',
-                            action: function() {
+                    $('#category_add_modal_label').text('Добавить категорию')
+                    $("#name_category_input").val('');
+                    $('#save_category_edit').hide();
+                    $('#save_category_add').show();
+                    $('#category_add_modal').modal('show');
 
-                                $('#category_add_modal_label').text('Добавить категорию')
-                                $("#name_category_input").val('');
-                                $('#save_category_edit').hide();
-                                $('#save_category_add').show();
-                                $('#category_add_modal').modal('show');
-
-                            }
-                        },
-
-                ],
+                }
+            },
+        ],
 
         rowCallback: function(row, data) {
             if (data) {
@@ -871,10 +909,20 @@ $(document).ready(function() {
         initComplete: function(data) {
             if(data.json['resultCode'] >= 1){
                 request_responses(data.json);
+                if(data.json['resultCode'] === 2){
+                    $("#view_category").hide();
+
+                }
+
+            }
+
+            if(data.json['edit_cat_list'] === '1'){
+                cat_edit_acces = '';
             }
         },
 
     }).buttons().container().appendTo('#table_category_wrapper .col-md-6:eq(0)');
+    $.fn.dataTable.ext.errMode = 'none';
     $('#table_pack').DataTable({
         ajax: {
             type: 'GET',
@@ -951,6 +999,7 @@ $(document).ready(function() {
                 }
             },
             {
+                className : get_acc_p(data_access, 'p_pack_edit') ? 'btn-sm' : 'btn-sm disabled',
                 text: 'Добавить',
                 action: function() {
 
@@ -972,6 +1021,10 @@ $(document).ready(function() {
         },
         initComplete: function(data) {
             if(data.json['resultCode'] >= 1){
+                if(data.json['resultCode'] === 2){
+
+                    $("#view_pack").hide();
+                }
                 request_responses(data.json);
             }
         },
@@ -1037,6 +1090,10 @@ $(document).ready(function() {
         var data = table.rows(this, {
             selected: true
         }).data()[0];
+        if(!get_acc_p(data_access, 'p_list_edit')){
+            $('#edit_row').hide();
+            $('#delete_row').hide();
+        }
         $('#id_row').text(function() {
             return "item number " + (data['id']);
         });
@@ -1085,7 +1142,7 @@ $(document).ready(function() {
             $('#confirm_delete').on('click', function() {
                 var data_delete = {};
                 data_delete["id"] = data['id'];
-                delete_row(data_delete);
+                delete_row(data_delete,token);
             });
 
         });
@@ -1159,15 +1216,15 @@ $(document).ready(function() {
     $('#modal_edit_save').click(function() {
         var data_from = objectifyForm('save_row');
         data_from['price_row'] = formatToKop(data_from['price_row']);
-        set_row(data_from);
+        set_row(data_from,token);
     });
     $('#save_category_add').click(function() {
         var data_from = objectifyForm('add_category');
-        add_category(data_from);
+        add_category(data_from,token);
     });
     $('#save_pack_add').click(function() {
         var data_from = objectifyForm('add_pack');
-        add_pack(data_from);
+        add_pack(data_from,token);
     });
     $('#modal_add_save').click(function() {
         var data_from = objectifyForm('add_row');
@@ -1176,7 +1233,7 @@ $(document).ready(function() {
         } else {
             data_from['price_row_add'] = '';
         }
-        add_row(data_from);
+        add_row(data_from,token);
 
 
     });
@@ -1187,7 +1244,7 @@ $(document).ready(function() {
             let data_from_save = {};
             data_from_save['set_name'] = 'price_client_modif';
             data_from_save['value'] = parseInt(data_from['price_client_modif_input'],10);
-            save_settings(data_from_save);
+            save_settings(data_from_save,token);
         } else {
         }
     });
@@ -1201,6 +1258,10 @@ $(document).ready(function() {
             return "item number " + (data['id']);
         });
         let date_clipboard = data['name'];
+        if(!get_acc_p(data_access, 'p_list_edit')){
+            $('#edit_row').hide();
+            $('#delete_row').hide();
+        }
         $('#copy_row').on('click', function() {
             navigator.clipboard.writeText(date_clipboard)
                 .then(() => {
@@ -1221,7 +1282,7 @@ $(document).ready(function() {
 
             $('#save_category_edit').click(function() {
                 var data_from = objectifyForm('add_category');
-                edit_category(data_from);
+                edit_category(data_from,token);
             });
         })
         $('#reload_table').on('click', function() {
@@ -1238,7 +1299,7 @@ $(document).ready(function() {
             $('#confirm_delete').on('click', function() {
                 var data_delete = {};
                 data_delete["id"] = data['id'];
-                delete_category(data_delete);
+                delete_category(data_delete,token);
             });
         });
         e.preventDefault();
@@ -1257,6 +1318,10 @@ $(document).ready(function() {
         $('#id_row').text(function() {
             return "item number " + (data['id']);
         });
+        if(!get_acc_p(data_access, 'p_pack_edit')){
+            $('#edit_row').hide();
+            $('#delete_row').hide();
+        }
         let date_clipboard = data['name'];
         $('#copy_row').on('click', function() {
             navigator.clipboard.writeText(date_clipboard)
@@ -1278,7 +1343,7 @@ $(document).ready(function() {
             $('#save_pack_edit').show();
             $('#save_pack_edit').click(function() {
                 var data_from = objectifyForm('add_pack');
-                edit_pack(data_from);
+                edit_pack(data_from,token);
             });
         })
         $('#reload_table').on('click', function() {
@@ -1294,7 +1359,7 @@ $(document).ready(function() {
             $('#confirm_delete').on('click', function() {
                 var data_delete = {};
                 data_delete["id"] = data['id'];
-                delete_pack(data_delete);
+                delete_pack(data_delete,token);
             });
         });
         e.preventDefault();

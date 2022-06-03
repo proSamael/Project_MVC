@@ -600,3 +600,6 @@ table.dataTable td {
         margin-top: .5em
     }
 }
+.btn.btn-hidden {
+    display: none;
+}
