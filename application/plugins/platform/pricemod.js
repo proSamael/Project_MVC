@@ -1,4 +1,5 @@
-(function(global) {
+//region Const
+(function (global) {
     global.data_price = new Array();
     global.data_cat = new Array();
     global.data_subcat = new Array();
@@ -17,11 +18,42 @@ let Toast = Swal.mixin({
 
 });
 toastr.options = {}
-const menu = $(".menu");
-let menuVisible = false;
+const menu_list = $(".menu_list");
+const menu_cat = $(".menu_cat");
+const menu_pack = $(".menu_pack");
+let menuVisible_list = false;
+let menuVisible_cat = false;
+let menuVisible_pack = false;
 let token = $.cookie('password_cookie_token');
-
-
+const toggleMenu_list = command => {
+    command === "show" ? menu_list.show(300) : menu_list.hide(300);
+    menuVisible_list = !menuVisible_list;
+};
+const toggleMenu_cat = command => {
+    command === "show" ? menu_cat.show(300) : menu_cat.hide(300);
+    menuVisible_cat = !menuVisible_cat;
+};
+const toggleMenu_pack = command => {
+    command === "show" ? menu_pack.show(300) : menu_pack.hide(300);
+    menuVisible_pack = !menuVisible_pack;
+};
+const setPosition_list = ({top, left}) => {
+    menu_list.css("left", `${left}px`);
+    menu_list.css("top", `${top}px`);
+    toggleMenu_list("show");
+};
+const setPosition_cat = ({top, left}) => {
+    menu_cat.css("left", `${left}px`);
+    menu_cat.css("top", `${top}px`);
+    toggleMenu_cat("show");
+};
+const setPosition_pack = ({top, left}) => {
+    menu_pack.css("left", `${left}px`);
+    menu_pack.css("top", `${top}px`);
+    toggleMenu_pack("show");
+};
+//endregion
+//region Functions
 function get_role_access(t) {
     var result;
     $.ajax ({
@@ -36,18 +68,6 @@ function get_role_access(t) {
     return result;
 
 }
-const toggleMenu = command => {
-    command === "show" ? menu.show(300) : menu.hide(300);
-    menuVisible = !menuVisible;
-};
-const setPosition = ({
-                         top,
-                         left
-                     }) => {
-    menu.css("left", `${left}px`);
-    menu.css("top", `${top}px`);
-    toggleMenu("show");
-};
 function send_message(icon, title, message, footer) {
     Toast.fire({
         icon: icon,
@@ -214,7 +234,7 @@ function get_price_settings(set_name) {
    //return data_settings;
 }
 function save_settings(set_name,t) {
-    console.log(set_name);
+
         $.ajax({
             url: "./index.php?price=save_settings_price&t="+t,
             data: set_name,
@@ -410,6 +430,9 @@ function request_responses(response){
     }
 }
 data_access = get_role_access(token);
+function isInArray(value, array) {
+    return array.indexOf(value) > -1;
+}
 function get_acc_p(data_arr, key_p){
     $.each(data_arr, function(key, value) {
         if(key === key_p){
@@ -422,16 +445,28 @@ function get_acc_p(data_arr, key_p){
     });
     return result.toString();
 }
+function get_colmn_in(data_arr, key_p){
+   if(isInArray(key_p, data_arr) ) {
+       result = '';
+   }else{
+       result = 'active';
+   }
+    return result.toString();
+}
+//endregion
+//region Ajax
 $.ajax({
     type: "GET",
     dataType: "json",
     url: "./index.php?",
     data: {
-        "price": "get_list_cat"
+        "price": "get_list_cat",
+        "t": token,
     },
 
     success: function(list_cat_array) {
-        data_list_cat = list_cat_array;
+        //let data_list_cat = $.parseJSON(list_cat_array);
+        data_list_cat = list_cat_array.data;
         if (~data_list_cat) {
             $.each(data_list_cat, function(key, value) {
                 $('#select_cat_row').append($("<option></option>").attr("value", value.id).text(value.name));
@@ -472,6 +507,7 @@ $.ajax({
 
     }
 });
+//endregion
 $(document).ready(function() {
     $.fn.dataTable.Buttons.defaults.dom.button.className = 'btn';
     var price_settings_modif = get_price_settings('price_client_modif');
@@ -654,6 +690,7 @@ $(document).ready(function() {
                 extend: 'collection',
                 text: 'Вид',
                 buttons: [{
+                    className : get_colmn_in(data_access.column_visible.split(","), '0') ? ' ' : 'd-none',
                     text: 'ID',
                     action: function() {
                         var table = $('#table_pricelist').DataTable();
@@ -666,6 +703,7 @@ $(document).ready(function() {
                     }
                 },
                     {
+                        className : get_colmn_in(data_access.column_visible.split(","), '1') ? ' ' : 'd-none',
                         text: 'Категория',
                         action: function() {
                             var table = $('#table_pricelist').DataTable();
@@ -677,6 +715,7 @@ $(document).ready(function() {
                         }
                     },
                     {
+                        className : get_colmn_in(data_access.column_visible.split(","), '2') ? ' ' : 'd-none',
                         text: 'Наименование',
                         action: function() {
                             var table = $('#table_pricelist').DataTable();
@@ -688,6 +727,7 @@ $(document).ready(function() {
                         }
                     },
                     {
+                        className : get_colmn_in(data_access.column_visible.split(","), '3') ? ' ' : 'd-none',
                         text: 'Упаковка',
                         action: function() {
                             var table = $('#table_pricelist').DataTable();
@@ -699,6 +739,7 @@ $(document).ready(function() {
                         }
                     },
                     {
+                        className : get_colmn_in(data_access.column_visible.split(","), '4') ? ' ' : 'd-none',
                         text: 'Цена c завода',
                         action: function() {
                             var table = $('#table_pricelist').DataTable();
@@ -710,6 +751,7 @@ $(document).ready(function() {
                         }
                     },
                     {
+                        className : get_colmn_in(data_access.column_visible.split(","), '5') ? ' ' : 'd-none',
                         text: 'Цена клиенту',
                         action: function() {
                             var table = $('#table_pricelist').DataTable();
@@ -721,6 +763,7 @@ $(document).ready(function() {
                         }
                     },
                     {
+                        className : get_colmn_in(data_access.column_visible.split(","), '6') ? ' ' : 'd-none',
                         text: 'Цена за упаковку',
                         action: function() {
                             var table = $('#table_pricelist').DataTable();
@@ -815,8 +858,14 @@ $(document).ready(function() {
         },
 
     }).buttons().container().appendTo('#table_pricelist_wrapper .col-md-6:eq(0)');
+        var table = $('#table_pricelist').DataTable();
+        if(data_access.column_visible){
+            column_visible_array = data_access.column_visible.split(",");
+            $.each(column_visible_array, function(key, value) {
+                        table.columns([value]).visible(false);
+            });
+        }
     //$.fn.dataTable.table_category.errMode = 'throw';
-
     $('#table_category').DataTable({
         ajax: {
             type: 'GET',
@@ -1082,9 +1131,6 @@ $(document).ready(function() {
             $(this).val('Invalid a value!');
         }
     });
-    window.addEventListener("click", e => {
-        if (menuVisible) toggleMenu("hide");
-    });
     $('#table_pricelist').on('contextmenu', 'tbody tr', function(e) {
         var table = $('#table_pricelist').DataTable();
         var data = table.rows(this, {
@@ -1151,10 +1197,13 @@ $(document).ready(function() {
             left: e.pageX,
             top: e.pageY
         };
-        setPosition(origin);
+        setPosition_list(origin);
         return false;
     });
     $('#table_pricelist tbody').on('click', 'tr', function() {
+        window.addEventListener("click", e => {
+            if (menuVisible_list) toggleMenu_list("hide");
+        });
         var table = $('#table_pricelist').DataTable();
         if ($(this).hasClass('selected')) {
             $(this).removeClass('selected');
@@ -1164,6 +1213,9 @@ $(document).ready(function() {
         }
     });
     $('#table_category tbody').on('click', 'tr', function() {
+        window.addEventListener("click", e => {
+            if (menuVisible_cat) toggleMenu_cat("hide");
+        });
         var table = $('#table_category').DataTable();
         if ($(this).hasClass('selected')) {
             $(this).removeClass('selected');
@@ -1173,6 +1225,9 @@ $(document).ready(function() {
         }
     });
     $('#table_pack tbody').on('click', 'tr', function() {
+        window.addEventListener("click", e => {
+            if (menuVisible_pack) toggleMenu_pack("hide");
+        });
         var table = $('#table_pack').DataTable();
         if ($(this).hasClass('selected')) {
             $(this).removeClass('selected');
@@ -1248,21 +1303,20 @@ $(document).ready(function() {
         } else {
         }
     });
-
     $('#table_category').on('contextmenu', 'tbody tr', function(e) {
         var table = $('#table_category').DataTable();
         var data = table.rows(this, {
             selected: true
         }).data()[0];
-        $('#id_row').text(function() {
+        $('#id_row_cat').text(function() {
             return "item number " + (data['id']);
         });
         let date_clipboard = data['name'];
-        if(!get_acc_p(data_access, 'p_list_edit')){
-            $('#edit_row').hide();
-            $('#delete_row').hide();
+        if(!get_acc_p(data_access, 'p_cat_edit')){
+            $('#edit_row_cat').hide();
+            $('#delete_row_cat').hide();
         }
-        $('#copy_row').on('click', function() {
+        $('#copy_row_cat').on('click', function() {
             navigator.clipboard.writeText(date_clipboard)
                 .then(() => {
                     send_message("success", "Запись скопирована в буфер обмена!", data['name'], "Воспользуйтесь функцией 'Вставить' или соч.кл. CTRL+V");
@@ -1271,9 +1325,8 @@ $(document).ready(function() {
                     send_message("warning", "Clipboard err!", 'Ошибка копирования в буфер обмена', err);
                 });
         })
-        $('#edit_row').on('click', function() {
+        $('#edit_row_cat').on('click', function() {
             $('#category_add_modal').modal('show');
-
             $('#category_add_modal_label').text('Изменить категорию')
             $("#id_category_input").val(data['id']);
             $("#name_category_input").val(data['name']);
@@ -1285,13 +1338,13 @@ $(document).ready(function() {
                 edit_category(data_from,token);
             });
         })
-        $('#reload_table').on('click', function() {
+        $('#reload_table_cat').on('click', function() {
             table.ajax.reload();
         })
-        $('#find_cat').on('click', function() {
+        $('#find_cat_cat').on('click', function() {
             table.search(data['name']).draw();
         });
-        $('#delete_row').on('click', function() {
+        $('#delete_row_cat').on('click', function() {
             $('#modal_delete').modal('show');
             $('#title_delete_modal').text('Удаление записи:'+data['name']);
             $('#row_delete_data').text(data['name']);
@@ -1307,7 +1360,7 @@ $(document).ready(function() {
             left: e.pageX,
             top: e.pageY
         };
-        setPosition(origin);
+        setPosition_cat(origin);
         return false;
     });
     $('#table_pack').on('contextmenu', 'tbody tr', function(e) {
@@ -1315,15 +1368,17 @@ $(document).ready(function() {
         var data = table.rows(this, {
             selected: true
         }).data()[0];
-        $('#id_row').text(function() {
+        $('#id_row_pack').text(function() {
             return "item number " + (data['id']);
         });
         if(!get_acc_p(data_access, 'p_pack_edit')){
-            $('#edit_row').hide();
-            $('#delete_row').hide();
+            $('#edit_row_pack').hide();
+            $('#delete_row_pack').hide();
+            $('#pack_add_modal').modal('toggle');
+
         }
         let date_clipboard = data['name'];
-        $('#copy_row').on('click', function() {
+        $('#copy_row_pack').on('click', function() {
             navigator.clipboard.writeText(date_clipboard)
                 .then(() => {
                     send_message("success", "Запись скопирована в буфер обмена!", data['name'], "Воспользуйтесь функцией 'Вставить' или соч.кл. CTRL+V");
@@ -1332,9 +1387,8 @@ $(document).ready(function() {
                     send_message("warning", "Clipboard err!", 'Ошибка копирования в буфер обмена', err);
                 });
         })
-        $('#edit_row').on('click', function() {
+        $('#edit_row_pack').on('click', function() {
             $('#pack_add_modal').modal('show');
-
             $('#pack_add_modal_label').text('Изменить упаковку')
             $("#id_pack_input").val(data['id']);
             $("#name_pack_input").val(data['name']);
@@ -1346,13 +1400,13 @@ $(document).ready(function() {
                 edit_pack(data_from,token);
             });
         })
-        $('#reload_table').on('click', function() {
+        $('#reload_table_pack').on('click', function() {
             table.ajax.reload();
         })
-        $('#find_cat').on('click', function() {
+        $('#find_cat_pack').on('click', function() {
             table.search(data['name']).draw();
         });
-        $('#delete_row').on('click', function() {
+        $('#delete_row_pack').on('click', function() {
             $('#modal_delete').modal('show');
             $('#title_delete_modal').text('Удаление записи:'+data['name']);
             $('#row_delete_data').text(data['name']);
@@ -1367,7 +1421,7 @@ $(document).ready(function() {
             left: e.pageX,
             top: e.pageY
         };
-        setPosition(origin);
+        setPosition_pack(origin);
         return false;
     });
 });

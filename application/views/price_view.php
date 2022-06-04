@@ -82,7 +82,7 @@
             </div>
         </div>
     </div>
-<div class="menu" style="display: none">
+<div class="menu_list" style="display: none">
     <ul class="menu-options">
         <li class="menu-option" id="id_row">ID: </li>
         <hr />
@@ -95,6 +95,32 @@
         <li class="menu-option" onclick="alert('click function')">Another action</li>
     </ul>
 </div>
+    <div class="menu_cat" style="display: none">
+        <ul class="menu-options">
+            <li class="menu-option" id="id_row_cat">ID: </li>
+            <hr />
+            <li class="menu-option" id="copy_row_cat">Копировать запись</li>
+            <li class="menu-option" id="edit_row_cat"><a href="#">Изменить запись</a></li>
+            <li class="menu-option" id="delete_row_cat" >Удалить запись</li>
+            <li class="menu-option" id="find_cat_cat">Найти похожие</li>
+            <li class="menu-option" id="reload_table_cat">Перзагрузить таблицу</li>
+            <hr />
+            <li class="menu-option" onclick="alert('click function')">Another action</li>
+        </ul>
+    </div>
+    <div class="menu_pack" style="display: none">
+        <ul class="menu-options">
+            <li class="menu-option" id="id_row_pack">ID: </li>
+            <hr />
+            <li class="menu-option" id="copy_row_pack">Копировать запись</li>
+            <li class="menu-option" id="edit_row_pack"><a href="#">Изменить запись</a></li>
+            <li class="menu-option" id="delete_row_pack" >Удалить запись</li>
+            <li class="menu-option" id="find_cat_pack">Найти похожие</li>
+            <li class="menu-option" id="reload_table_pack">Перзагрузить таблицу</li>
+            <hr />
+            <li class="menu-option" onclick="alert('click function')">Another action</li>
+        </ul>
+    </div>
 <div class="modal" tabindex="-1" role="dialog" id="modal_delete">
     <div class="modal-dialog" role="document">
         <div class="modal-content">

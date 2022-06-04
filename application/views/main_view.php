@@ -40,3 +40,9 @@
     <!-- /.content -->
 </div>
 
+
+
+
+
+<script src="./application/plugins/moment/moment.min.js"></script>
+

@@ -101,7 +101,7 @@ class controller_price extends Controller
     function action_get_list_cat(){
         $t =  $_GET['t'];
         if($this->chek_token($t)) {
-            if ($this->chek_token($t)['p_list_cat'] == 1) {
+            if ($this->chek_token($t)['p_list_view'] == 1) {
             $list_cat = $this->db->getAll('SELECT * FROM `p_category`');
             $data=Array("data" => $list_cat, "resultCode" => 0, "result_msg" => 'OK'); //associative array
         }else{

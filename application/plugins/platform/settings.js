@@ -1,5 +1,3 @@
-
-
 (function(global) {
     global.data_settings = new Array();
     global.data_role = new Array();
@@ -18,9 +16,21 @@ let Toast = Swal.mixin({
 toastr.options = {
 
 }
+
+let column_visible = $('select[name="column_visible[]"]').bootstrapDualListbox({
+    nonSelectedListLabel: 'Отображать',
+    selectedListLabel: 'Не отображать',
+    showFilterInputs: false,
+    preserveSelectionOnMove: 'moved',
+    moveOnSelect: false,
+    infoText: false,
+
+});
+
 function get_group_settings(list_role, role_id){
 
     $("#group_price_setting").show();
+    $("#group_column_visible").show();
 
     $.each(list_role, function(key, value) {
         if(value.id === role_id){
@@ -59,6 +69,8 @@ function get_group_settings(list_role, role_id){
             }else{
                 document.getElementById('p_pack_edit').checked = false;
             }
+            column_visible.val(value['column_visible'].split(','));
+            column_visible.bootstrapDualListbox('refresh');
         }
 
     });
@@ -90,7 +102,7 @@ function autosave(dataform) {
 
 }
 function set_group_settings(data_form_group, id_role) {
-console.log(data_form_group)
+
     jQuery.ajax({
         url: "./index.php?settings=set_group_settings&id="+id_role,
         data: data_form_group,
@@ -101,10 +113,6 @@ console.log(data_form_group)
                 send_message("warning", "Ошибка сохранения", obj.result_msg, '');
             }
             if (obj.resultCode === 0) {
-                setTimeout(function() {
-                    $('#table_pricelist').DataTable().ajax.reload();
-                }, 1500);
-                $('#modal_delete').modal('toggle');
                 send_message("success", "Изменения успешно сохранены", obj.result_msg, '');
             }
 
@@ -141,16 +149,46 @@ function get_role_grops(id_role){
             }
         });
 }
+function set_column_visible(list_column,id_role){//in string split (,)
+    $.ajax({
+        type: "GET",
+        dataType: "json",
+        url: "./index.php?",
+        data: {
+            "settings":"set_column_visible",
+            "id":id_role,
+            "list_column":list_column
+        },
+        success: function (data) {
+            //let obj = $.parseJSON(data);
+            if (data.resultCode === 1) {
+                send_message("warning", "Ошибка сохранения", data.result_msg, '');
+            }
+            if (data.resultCode === 0) {
+                send_message("success", "Изменения успешно сохранены", data.result_msg, '');
+            }
+        },
+        error: function(data) {
+            send_message("warning", "Jquery Ajax Error", data, '');
+            console.log('Ошибка: ' + data);
+        }
+    });
+}
+$( "#select_group" ).change(function() {
+    let_last_val = $( "#select_group" ).val();
+    get_group_settings(data_role,  $( "#select_group" ).val());
+    get_role_grops($( "#select_group" ).val());
 
-
-get_role_grops();
-$.ajax({
-    type: "GET",
-    dataType: "json",
-    url: "./index.php?",
-    data: {"settings":"get_reg_settings"},
-    success: function (settings_array) {
-        data_settings = settings_array;
+});
+$(document).ready(function() {
+    get_role_grops();
+    $.ajax({
+        type: "GET",
+        dataType: "json",
+        url: "./index.php?",
+        data: {"settings":"get_reg_settings"},
+        success: function (settings_array) {
+            data_settings = settings_array;
             if(data_settings['reg_active'].value == 1){
                 document.getElementById('switch_regon').checked = true;
             }else{
@@ -175,17 +213,10 @@ $.ajax({
             $('#select_passwdtype option[value='+ data_settings['reg_type'].value +']').prop('selected', true);
             $('#select_roleuser option[value='+ data_settings['reg_access_new_user'].value +']').prop('selected', true);
             //
-
-    }
-});
-$( "#select_group" ).change(function() {
-    let_last_val = $( "#select_group" ).val();
-    get_group_settings(data_role,  $( "#select_group" ).val());
-    get_role_grops($( "#select_group" ).val());
-
-});
-$(document).ready(function() {
+        }
+    });
     $("#group_price_setting").hide();
+    $("#group_column_visible").hide();
     $("#reg_login_settings").change(function() {
         var dataform =  $("#reg_login_settings").serializeArray()
         names = (function(){
@@ -219,9 +250,14 @@ $(document).ready(function() {
         // Проверяем состояние чекбоксов после любого изменени
         // checkedAry ассоциативный массив группы chek_form_group 1 - выбран 0 -нет
         //console.log(checkedAry)
+
         set_group_settings(checkedAry, $( "#select_group" ).val());
     });
-
+    $("#save_column").click(function() {
+        var selectedValues = column_visible.val();
+        //console.log(selectedValues.toString());
+        set_column_visible(selectedValues.toString(),$( "#select_group" ).val());
+    });
 
 
 });

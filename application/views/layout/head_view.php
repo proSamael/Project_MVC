@@ -24,5 +24,6 @@
     <link rel="stylesheet" href="./application/plugins/jsgrid/jsgrid.min.css">
     <link rel="stylesheet" href="./application/plugins/jsgrid/jsgrid.min.css">
     <link rel="stylesheet" href="./application/plugins/jsgrid/jsgrid-theme.min.css">
+    <link rel="stylesheet" href="./application/plugins/bootstrap4-duallistbox/bootstrap-duallistbox.css">
 
 </head>

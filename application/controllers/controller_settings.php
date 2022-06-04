@@ -72,6 +72,7 @@ class controller_settings extends Controller
     function action_set_group_settings(){
         $data = Array();
         $result ='';
+        //$names_str = implode(" , ",$names_arr);
         $set_group_settings =  $_GET;
         $set_group_settings = array_slice($set_group_settings, 1);
         $id_group = $set_group_settings['id'];
@@ -94,5 +95,32 @@ class controller_settings extends Controller
             $data=Array("data" => $id_group, "resultCode" => 1, "result_msg" => 'Error id role :'.$id_group); //associative array
         }
         echo json_encode($data);
+    }
+    function action_set_column_visible(){
+        $data = Array();
+        $set_column =  $_GET;
+        $set_column = array_slice($set_column, 1);
+        $id_group = $set_column['id'];
+        if($id_group >= 0) {
+            $group_settings = $this->db->getAll('SELECT * FROM `roles` WHERE `id` = ?i', $id_group);
+            foreach ($group_settings[0] as $key => $value) {
+                if ("column_visible" == $key)
+                {
+                    $sql  = "UPDATE `roles` SET `column_visible` = ?s WHERE `id` = ?i;";
+                    $this->db->query($sql,$set_column['list_column'],$id_group);
+                    $sql_result = $this->db->affectedRows();
+                    if($sql_result!=0){
+                        $result = array('resultCode'=> 0,  'result_msg'=> "Таблица успешно сохранена", 'data'=> 'Вернулось: '.$sql_result);
+                    }else{
+                        $result = array('resultCode'=> 1,  'result_msg'=> "Что-то пошло не так: MySQL affected error ", 'data'=> 'Вернулось: '.$sql_result);
+                    }
+                }else{
+                    $result = array('resultCode'=> 1,  'result_msg'=> "Ошибка параметра настройки ", 'data'=> 'Вернулось: '.$key);
+                }
+            }
+        }else{
+            $result = array('resultCode'=> 1,  'result_msg'=> "Ошибка выбора группы пользователей ", 'data'=> 'Вернулось: '.$id_group);
+        }
+        echo json_encode($result);
     }
 }

@@ -165,6 +165,22 @@
                                                                         <input type="checkbox" class="custom-control-input" id="p_pack_edit" name="chek_form_group" value="p_pack_edit" >
                                                                         <label class="custom-control-label" for="p_pack_edit" title=" ">Редактирование типа упаковки</label>
                                                                     </div>
+
+
+                                                                </form>
+                                                                <form id="group_column_visible" class="my-form hide">
+                                                                    <div class="form-group">
+                                                                        <select multiple="multiple" size="10" name="column_visible[]" title="column_visible[]" id="column_visible">
+                                                                            <option value="0">ID</option>
+                                                                            <option value="1">Категория</option>
+                                                                            <option value="2">Наименование</option>
+                                                                            <option value="3">Упаковка</option>
+                                                                            <option value="4">Цена с завода</option>
+                                                                            <option value="5">Цена клиенту</option>
+                                                                            <option value="6">Цена за упаковку</option>
+                                                                        </select>
+                                                                    </div>
+                                                                    <button type="button" id="save_column" class="btn btn-default btn-block">Сохранить таблицу</button>
                                                                 </form>
                                                             </div>
                                                             <!-- /.tab-pane -->
@@ -193,7 +209,10 @@
         </div>
     </div>
 </div>
+
+
  <script src="application/plugins/jquery/jquery.min.js"></script>
  <script src="application/plugins/sweetalert2/sweetalert2.min.js"></script>
  <script src="application/plugins/toastr/toastr.min.js"></script>
+ <script src="application/plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
  <script src="application/plugins/platform/settings.js"></script>

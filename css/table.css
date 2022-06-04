@@ -11,7 +11,7 @@ main {
     font-family: 'Abel', sans-serif;
 }
 
-.menu {
+.menu_list {
     font-family: "Montserrat", sans-serif;
 
     background: #17181c;
@@ -23,19 +23,75 @@ main {
     color: white;
 }
 
-.menu .menu-options {
+.menu_list .menu-options {
     list-style: none;
     padding: 10px 0;
 }
 
-.menu .menu-options .menu-option {
+.menu_list .menu-options .menu-option {
     font-weight: 500;
     font-size: 14px;
     padding: 10px 40px 10px 20px;
     cursor: pointer;
 }
 
-.menu .menu-options .menu-option:hover {
+.menu_list .menu-options .menu-option:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.menu_cat {
+    font-family: "Montserrat", sans-serif;
+
+    background: #17181c;
+    width: 280px;
+    box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    display: none;
+    z-index: 999999;
+    color: white;
+}
+
+.menu_cat .menu-options {
+    list-style: none;
+    padding: 10px 0;
+}
+
+.menu_cat .menu-options .menu-option {
+    font-weight: 500;
+    font-size: 14px;
+    padding: 10px 40px 10px 20px;
+    cursor: pointer;
+}
+
+.menu_cat .menu-options .menu-option:hover {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.menu_pack {
+    font-family: "Montserrat", sans-serif;
+
+    background: #17181c;
+    width: 280px;
+    box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    display: none;
+    z-index: 999999;
+    color: white;
+}
+
+.menu_pack .menu-options {
+    list-style: none;
+    padding: 10px 0;
+}
+
+.menu_pack .menu-options .menu-option {
+    font-weight: 500;
+    font-size: 14px;
+    padding: 10px 40px 10px 20px;
+    cursor: pointer;
+}
+
+.menu_pack .menu-options .menu-option:hover {
     background: rgba(0, 0, 0, 0.2);
 }
 
