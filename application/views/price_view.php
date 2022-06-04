@@ -91,8 +91,6 @@
         <li class="menu-option" id="delete_row" >Удалить запись</li>
         <li class="menu-option" id="find_cat">Найти похожие</li>
         <li class="menu-option" id="reload_table">Перзагрузить таблицу</li>
-        <hr />
-        <li class="menu-option" onclick="alert('click function')">Another action</li>
     </ul>
 </div>
     <div class="menu_cat" style="display: none">
@@ -104,8 +102,6 @@
             <li class="menu-option" id="delete_row_cat" >Удалить запись</li>
             <li class="menu-option" id="find_cat_cat">Найти похожие</li>
             <li class="menu-option" id="reload_table_cat">Перзагрузить таблицу</li>
-            <hr />
-            <li class="menu-option" onclick="alert('click function')">Another action</li>
         </ul>
     </div>
     <div class="menu_pack" style="display: none">
@@ -117,8 +113,6 @@
             <li class="menu-option" id="delete_row_pack" >Удалить запись</li>
             <li class="menu-option" id="find_cat_pack">Найти похожие</li>
             <li class="menu-option" id="reload_table_pack">Перзагрузить таблицу</li>
-            <hr />
-            <li class="menu-option" onclick="alert('click function')">Another action</li>
         </ul>
     </div>
 <div class="modal" tabindex="-1" role="dialog" id="modal_delete">

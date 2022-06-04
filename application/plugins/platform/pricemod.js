@@ -83,7 +83,7 @@ function isINT(x, y) {
     return false;
 }
 function set_row(dataform,t) {
-    jQuery('form').each(function() {
+
         jQuery.ajax({
             url: "./index.php?price=set_price_row&t="+t,
             data: dataform,
@@ -91,10 +91,10 @@ function set_row(dataform,t) {
             success: function(data) {
                 $('#modal-lg').modal('toggle')
                 let obj = $.parseJSON(data);
-                if (obj.resultCode === 1) {
+                if (obj.resultCode == 1) {
                     send_message("warning", "Ошибка записи", obj.result_msg, obj.data);
                 }
-                if (obj.resultCode === 0) {
+                if (obj.resultCode == 0) {
                     if(obj.data > 0){
                         send_message("success", "Запись сохранена", obj.result_msg, obj.data);
                         setTimeout(function () {
@@ -111,7 +111,7 @@ function set_row(dataform,t) {
                 console.log('Ошибка: ' + data);
             }
         });
-    });
+
 }
 function add_category(dataform,t) {
 
@@ -382,6 +382,9 @@ function formatToRub(n) { // конвертируют копейки в рубл
     return out;
 
 }
+function isNumberToDecimal(n) {
+    return parseFloat(n);
+}
 function formatToKop(n) { // конвертируют рубли в копейки
     // in 100.50 , 100,50
     // out 10050
@@ -555,11 +558,20 @@ $(document).ready(function() {
             },
             {
                 data: 'price_client',
-                title: 'Цена клиенту'
+                title: 'Цена клиенту',
+                render: function ( data, type, row ) {
+
+                    var result = data / 100 * data_price_modif;
+                    return (parseFloat(data) + parseFloat(result)).toFixed(2);
+                }
             },
             {
                 data: 'price_in_pack_client',
-                title: 'Цена за упаковку'
+                title: 'Цена за упаковку',
+                render: function ( data, type, row ) {
+                    var result = data / 100 * data_price_modif;
+                    return ((parseFloat(data) + parseFloat(result)) * row.pack_in_count).toFixed(2);
+                }
             },
 
         ],
@@ -830,25 +842,18 @@ $(document).ready(function() {
 
         rowCallback: function(row, data) {
             if (data) {
-                if (data.price > 0) {
-                    $('td', row).eq(4).addClass('').html(formatToRub(data.price));
-                    var result = (parseInt(data.price) / 100) * parseInt(data_price_modif); //вычисление процентов
-                    $('td', row).eq(5).addClass('').html(formatToRub(result + parseInt(data.price)));
-                    $('td', row).eq(6).addClass('').html(formatToRub((result + parseInt(data.price)) * parseInt(data.pack_in_count)));
-                    if (data.price.match(/^-?\d*(\.\d+)?$/)) {
-                        data.price = data.price;
-                    } else {
-                        data.price = formatToRub(data.price);
-                    }
-                    data.price_in_pack_client = formatToRub((result + parseInt(data.price)) * data.pack_in_count);
-                    data.price_client = formatToRub(result + parseInt(data.price));
-                    data.price = formatToRub(data.price);
-                } else {
-                    $('td', row).eq(4).addClass('').html('0');
-                    $('td', row).eq(5).addClass('').html('0');
-                    $('td', row).eq(6).addClass('').html('0');
-                }
 
+                if (data.price > 0) {
+              /*
+                    $('td', row).eq(4).addClass('').html(data.price);
+                    var result = (data.price / 100) * data_price_modif; //вычисление процентов
+                    $('td', row).eq(5).addClass('').html((result + (data.price)));
+                    $('td', row).eq(6).addClass('').html((result + (data.price)) * data.pack_in_count);
+                    data.price_in_pack_client = (result + data.price) * data.pack_in_count;
+                    data.price_client = result + data.price;
+                    data.price = data.price;
+              */
+                }
             }
         },
         initComplete: function(data) {
@@ -858,6 +863,7 @@ $(document).ready(function() {
         },
 
     }).buttons().container().appendTo('#table_pricelist_wrapper .col-md-6:eq(0)');
+
         var table = $('#table_pricelist').DataTable();
         if(data_access.column_visible){
             column_visible_array = data_access.column_visible.split(",");
@@ -866,6 +872,7 @@ $(document).ready(function() {
             });
         }
     //$.fn.dataTable.table_category.errMode = 'throw';
+
     $('#table_category').DataTable({
         ajax: {
             type: 'GET',
@@ -972,6 +979,11 @@ $(document).ready(function() {
 
     }).buttons().container().appendTo('#table_category_wrapper .col-md-6:eq(0)');
     $.fn.dataTable.ext.errMode = 'none';
+    $('*').click(function(event) {
+        toggleMenu_pack();
+        toggleMenu_list();
+        toggleMenu_cat();
+    });
     $('#table_pack').DataTable({
         ajax: {
             type: 'GET',
@@ -1141,10 +1153,11 @@ $(document).ready(function() {
             $('#delete_row').hide();
         }
         $('#id_row').text(function() {
-            return "item number " + (data['id']);
+            return data['name'];
         });
-        let date_clipboard = data['name'] + ' Цена: ' + formatToRub(data['price']);
+        let date_clipboard = data['name'] + ' Цена: ' + data['price'];
         $('#copy_row').on('click', function() {
+            toggleMenu_list();
             navigator.clipboard.writeText(date_clipboard)
                 .then(() => {
                     send_message("success", "Запись скопирована в буфер обмена!", data['name'], "Воспользуйтесь функцией 'Вставить' или соч.кл. CTRL+V");
@@ -1154,6 +1167,7 @@ $(document).ready(function() {
                 });
         })
         $('#edit_row').on('click', function() {
+            toggleMenu_list();
             $('#modal-lg').modal('show')
             $('#select_cat_row option[value=' + data['cat_id'] + ']').prop('selected', true);
             $('#pack_row option[value=' + data['pack_id'] + ']').prop('selected', true);
@@ -1176,13 +1190,15 @@ $(document).ready(function() {
             $("#price_row").val(data['price']);
         })
         $('#reload_table').on('click', function() {
+            toggleMenu_list();
             table.ajax.reload();
         })
         $('#find_cat').on('click', function() {
-
+            toggleMenu_list();
             table.search(data['category']).draw();
         });
         $('#delete_row').on('click', function() {
+            toggleMenu_list();
             $('#modal_delete').modal('show');
             $('#row_delete_data').text(data['name']);
             $('#confirm_delete').on('click', function() {
@@ -1201,8 +1217,13 @@ $(document).ready(function() {
         return false;
     });
     $('#table_pricelist tbody').on('click', 'tr', function() {
+        toggleMenu_pack();
+        toggleMenu_list();
+        toggleMenu_cat();
         window.addEventListener("click", e => {
             if (menuVisible_list) toggleMenu_list("hide");
+            if (menuVisible_list) toggleMenu_pack("hide");
+            if (menuVisible_list) toggleMenu_cat("hide");
         });
         var table = $('#table_pricelist').DataTable();
         if ($(this).hasClass('selected')) {
@@ -1213,8 +1234,13 @@ $(document).ready(function() {
         }
     });
     $('#table_category tbody').on('click', 'tr', function() {
+        toggleMenu_pack();
+        toggleMenu_list();
+        toggleMenu_cat();
         window.addEventListener("click", e => {
-            if (menuVisible_cat) toggleMenu_cat("hide");
+            if (menuVisible_list) toggleMenu_list("hide");
+            if (menuVisible_list) toggleMenu_pack("hide");
+            if (menuVisible_list) toggleMenu_cat("hide");
         });
         var table = $('#table_category').DataTable();
         if ($(this).hasClass('selected')) {
@@ -1225,8 +1251,13 @@ $(document).ready(function() {
         }
     });
     $('#table_pack tbody').on('click', 'tr', function() {
+        toggleMenu_pack();
+        toggleMenu_list();
+        toggleMenu_cat();
         window.addEventListener("click", e => {
-            if (menuVisible_pack) toggleMenu_pack("hide");
+            if (menuVisible_list) toggleMenu_list("hide");
+            if (menuVisible_list) toggleMenu_pack("hide");
+            if (menuVisible_list) toggleMenu_cat("hide");
         });
         var table = $('#table_pack').DataTable();
         if ($(this).hasClass('selected')) {
@@ -1270,7 +1301,7 @@ $(document).ready(function() {
     });
     $('#modal_edit_save').click(function() {
         var data_from = objectifyForm('save_row');
-        data_from['price_row'] = formatToKop(data_from['price_row']);
+        data_from['price_row'] = isNumberToDecimal(data_from['price_row']);
         set_row(data_from,token);
     });
     $('#save_category_add').click(function() {
@@ -1289,8 +1320,6 @@ $(document).ready(function() {
             data_from['price_row_add'] = '';
         }
         add_row(data_from,token);
-
-
     });
     $('#save_price_client_modif').click(function() {
         var data_from = objectifyForm('form_price_client');
@@ -1309,7 +1338,7 @@ $(document).ready(function() {
             selected: true
         }).data()[0];
         $('#id_row_cat').text(function() {
-            return "item number " + (data['id']);
+            return data['name'];
         });
         let date_clipboard = data['name'];
         if(!get_acc_p(data_access, 'p_cat_edit')){
@@ -1317,6 +1346,7 @@ $(document).ready(function() {
             $('#delete_row_cat').hide();
         }
         $('#copy_row_cat').on('click', function() {
+            toggleMenu_cat();
             navigator.clipboard.writeText(date_clipboard)
                 .then(() => {
                     send_message("success", "Запись скопирована в буфер обмена!", data['name'], "Воспользуйтесь функцией 'Вставить' или соч.кл. CTRL+V");
@@ -1326,6 +1356,7 @@ $(document).ready(function() {
                 });
         })
         $('#edit_row_cat').on('click', function() {
+            toggleMenu_cat();
             $('#category_add_modal').modal('show');
             $('#category_add_modal_label').text('Изменить категорию')
             $("#id_category_input").val(data['id']);
@@ -1339,12 +1370,15 @@ $(document).ready(function() {
             });
         })
         $('#reload_table_cat').on('click', function() {
+            toggleMenu_cat();
             table.ajax.reload();
         })
         $('#find_cat_cat').on('click', function() {
+            toggleMenu_cat();
             table.search(data['name']).draw();
         });
         $('#delete_row_cat').on('click', function() {
+            toggleMenu_cat();
             $('#modal_delete').modal('show');
             $('#title_delete_modal').text('Удаление записи:'+data['name']);
             $('#row_delete_data').text(data['name']);
@@ -1369,7 +1403,7 @@ $(document).ready(function() {
             selected: true
         }).data()[0];
         $('#id_row_pack').text(function() {
-            return "item number " + (data['id']);
+            return data['name'];
         });
         if(!get_acc_p(data_access, 'p_pack_edit')){
             $('#edit_row_pack').hide();
@@ -1379,6 +1413,7 @@ $(document).ready(function() {
         }
         let date_clipboard = data['name'];
         $('#copy_row_pack').on('click', function() {
+            toggleMenu_pack();
             navigator.clipboard.writeText(date_clipboard)
                 .then(() => {
                     send_message("success", "Запись скопирована в буфер обмена!", data['name'], "Воспользуйтесь функцией 'Вставить' или соч.кл. CTRL+V");
@@ -1388,6 +1423,7 @@ $(document).ready(function() {
                 });
         })
         $('#edit_row_pack').on('click', function() {
+            toggleMenu_pack();
             $('#pack_add_modal').modal('show');
             $('#pack_add_modal_label').text('Изменить упаковку')
             $("#id_pack_input").val(data['id']);
@@ -1401,12 +1437,15 @@ $(document).ready(function() {
             });
         })
         $('#reload_table_pack').on('click', function() {
+            toggleMenu_pack();
             table.ajax.reload();
         })
         $('#find_cat_pack').on('click', function() {
+            toggleMenu_pack();
             table.search(data['name']).draw();
         });
         $('#delete_row_pack').on('click', function() {
+            toggleMenu_pack();
             $('#modal_delete').modal('show');
             $('#title_delete_modal').text('Удаление записи:'+data['name']);
             $('#row_delete_data').text(data['name']);

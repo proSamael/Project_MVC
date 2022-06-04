@@ -125,14 +125,28 @@
                                                         <ul class="nav nav-pills">
                                                             <li class="nav-item"><a class="nav-link active" href="#activity" data-toggle="tab">Общие</a></li>
                                                             <li class="nav-item"><a class="nav-link" href="#pricelist" data-toggle="tab">Прайс лист</a></li>
-                                                            <li class="nav-item"><a class="nav-link" href="#settings" data-toggle="tab">Настройки</a></li>
+                                                            <li class="nav-item"><a class="nav-link" href="#list_user" data-toggle="tab">Список польз. в группе</a></li>
                                                         </ul>
                                                     </div><!-- /.card-header -->
                                                     <div class="card-body">
                                                         <div class="tab-content">
                                                             <div class="active tab-pane" id="activity">
-
+                                                                <form id="group_general_settings" class="my-form hide">
+                                                                <div class="form-group row">
+                                                                    <label for="group_name" class="col-sm-2 col-form-label" title="Название группы">Название группы</label>
+                                                                    <div class="col-sm-2">
+                                                                        <input type="text" class="form-control form-control-border" id="group_name" placeholder=" " name="chek_form_general_settings">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                                                                        <input type="checkbox" class="custom-control-input" id="group_login_in" name="chek_form_general_settings">
+                                                                        <label class="custom-control-label" for="group_login_in" title="Вход в систему">Разрешить вход в систему?</label>
+                                                                    </div>
+                                                                </div>
+                                                                </form>
                                                             </div>
+
                                                             <!-- /.tab-pane -->
                                                             <div class="tab-pane" id="pricelist">
                                                                 <form id="group_price_setting" class="my-form hide">
@@ -185,7 +199,7 @@
                                                             </div>
                                                             <!-- /.tab-pane -->
 
-                                                            <div class="tab-pane" id="settings">
+                                                            <div class="tab-pane" id="list_user">
 
                                                             </div>
                                                             <!-- /.tab-pane -->

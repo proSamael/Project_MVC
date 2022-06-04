@@ -114,9 +114,9 @@ class controller_settings extends Controller
                     }else{
                         $result = array('resultCode'=> 1,  'result_msg'=> "Что-то пошло не так: MySQL affected error ", 'data'=> 'Вернулось: '.$sql_result);
                     }
-                }else{
+                }/*else{
                     $result = array('resultCode'=> 1,  'result_msg'=> "Ошибка параметра настройки ", 'data'=> 'Вернулось: '.$key);
-                }
+                }*/
             }
         }else{
             $result = array('resultCode'=> 1,  'result_msg'=> "Ошибка выбора группы пользователей ", 'data'=> 'Вернулось: '.$id_group);

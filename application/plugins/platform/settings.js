@@ -31,7 +31,7 @@ function get_group_settings(list_role, role_id){
 
     $("#group_price_setting").show();
     $("#group_column_visible").show();
-
+    $("#group_general_settings").show();
     $.each(list_role, function(key, value) {
         if(value.id === role_id){
             if(value['p_list_view'] == 1){
@@ -216,6 +216,7 @@ $(document).ready(function() {
         }
     });
     $("#group_price_setting").hide();
+    $("#group_general_settings").hide();
     $("#group_column_visible").hide();
     $("#reg_login_settings").change(function() {
         var dataform =  $("#reg_login_settings").serializeArray()

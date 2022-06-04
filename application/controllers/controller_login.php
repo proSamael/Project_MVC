@@ -84,12 +84,17 @@ class Controller_login extends Controller
                         $this->db->query($sql,$password_cookie_token,$data);
                         setcookie("password_cookie_token", $password_cookie_token, time() + (3600 * 24 * $reg_settings['reg_cookie_time']['value']));
                     } else {
+
+                        $password_cookie_token_nr = md5($login . $password . time());
+                        $data = array('login' => $user_pass['login']);
+                        $sql = "UPDATE users SET token=?s WHERE ?u;";
+                        $this->db->query($sql,$password_cookie_token_nr,$data);
+                        setcookie("password_cookie_token", $password_cookie_token_nr, time() + (3600));
                         //Если галочка "запомнить меня" небыла поставлена, то мы удаляем куки
-                        if (isset($_COOKIE["password_cookie_token"])) {
-                            //Удаляем куку password_cookie_token
-                            $password_cookie_token = md5($login . $password . time());
-                            setcookie("password_cookie_token", $password_cookie_token, time() + (3600 * 24));
-                        }
+                        //if (isset($_COOKIE["password_cookie_token"])) {
+                        //    $password_cookie_token = md5($login . $password . time());
+                        //    setcookie("password_cookie_token", $password_cookie_token, time() + (3600 * 24));
+                        //}
                     }
                     header('Location:./index.php?home');
                 } else {
